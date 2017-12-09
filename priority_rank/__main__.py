@@ -1,5 +1,3 @@
-import csv
-import networkx as nx
 import os
 import pandas as pd
 
@@ -7,18 +5,9 @@ from utils import PrimarySchoolDatasetHandler, WorkplaceDatasetHandler
 from config import primaryschool, primaryschool_dataset_dir
 
 # Load Primary School dataset
-# Prepare dataset file
-if not os.path.exists(primaryschool['prepared_dataset']):
-    PrimarySchoolDatasetHandler.prepare_dataset(primaryschool['dataset'], primaryschool['prepared_dataset'])
 
 # Read metadata
 class_id, gender = PrimarySchoolDatasetHandler.read_metadata(primaryschool['metadata'])
-
-# Create graph with edges loaded from dataset
-graph = nx.read_edgelist(primaryschool['prepared_dataset'], nodetype=int)
-# Add attributes to nodes
-nx.set_node_attributes(graph, class_id, 'class')
-nx.set_node_attributes(graph, gender, 'gender')
 
 # Prepare csv for dataframe
 dest_file = os.path.join(primaryschool_dataset_dir, 'prepared_data.csv')
