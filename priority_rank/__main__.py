@@ -6,8 +6,7 @@ import pandas as pd
 from utils import PrimarySchoolDatasetHandler
 from config import primaryschool, primaryschool_dataset_dir
 
-# Load network 1 dataset
-
+# Load Primary School dataset
 primary_school_handler = PrimarySchoolDatasetHandler()
 # Prepare dataset file
 if not os.path.exists(primaryschool['prepared_dataset']):
@@ -41,8 +40,29 @@ with open(primaryschool['dataset'], 'r') as source:
 df = pd.read_csv(dest_file, sep='\t')
 print(df)
 
-# Load network 2 dataset
+# Load Workplace dataset
+# read metadata
+department = {}
+with open('Datasets/workplace/metadata_InVS13.txt', 'r') as f:
+    for line in f:
+        split = line.split()
+        department[int(split[0])] = split[1]
 
+# create csv dataframe
+dest_file2 = 'Datasets/workplace/prepared_data.csv'
+with open('Datasets/workplace/tij_InVS.dat', 'r') as source:
+    reader = csv.reader(source, delimiter=' ')
+    with open(dest_file2, 'w') as result:
+        writer = csv.writer(result, delimiter='\t')
+        writer.writerow(
+            ('department1', 'department2')
+        )
+        for row in reader:
+            writer.writerow(
+                (department[int(row[1])], department[int(row[2])])
+            )
+df2 = pd.read_csv(dest_file2, sep='\t')
+print(df2)
 # Transform network to training dataset
 
 # Priority Rank
