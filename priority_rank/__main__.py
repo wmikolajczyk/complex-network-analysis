@@ -1,5 +1,15 @@
-# Load network 1 dataset
+import networkx as nx
+import os
 
+from utils import prepare_primaryschool_dataset
+# Load network 1 dataset
+primaryschool_dataset_dir = 'Datasets/primary_school/'
+primaryschool_dataset = os.path.join(primaryschool_dataset_dir, 'primaryschool.csv')
+primaryschool_prepared_dataset = os.path.join(primaryschool_dataset_dir, 'primaryschool_prepared.csv')
+
+prepare_primaryschool_dataset(primaryschool_dataset, primaryschool_prepared_dataset)
+
+graph = nx.read_edgelist(primaryschool_prepared_dataset)
 # Load network 2 dataset
 
 # Transform network to training dataset
