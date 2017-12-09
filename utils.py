@@ -14,3 +14,18 @@ def prepare_primaryschool_dataset(source_file, dest_file):
             for row in reader:
                 writer.writerow((row[1], row[2]))
 
+
+def read_primaryschool_metadata(source_file):
+    """
+
+    :param source_file:
+    :return:
+    """
+    class_id = {}
+    gender = {}
+    with open(source_file, 'r') as f:
+        for line in f:
+            split = line.split()
+            class_id[int(split[0])] = split[1]
+            gender[int(split[0])] = split[2]
+    return class_id, gender
