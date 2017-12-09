@@ -7,7 +7,8 @@ primaryschool_dataset_dir = 'Datasets/primary_school/'
 primaryschool_dataset = os.path.join(primaryschool_dataset_dir, 'primaryschool.csv')
 primaryschool_prepared_dataset = os.path.join(primaryschool_dataset_dir, 'primaryschool_prepared.csv')
 
-prepare_primaryschool_dataset(primaryschool_dataset, primaryschool_prepared_dataset)
+if not os.path.exists(primaryschool_prepared_dataset):
+    prepare_primaryschool_dataset(primaryschool_dataset, primaryschool_prepared_dataset)
 
 graph = nx.read_edgelist(primaryschool_prepared_dataset)
 # Load network 2 dataset
