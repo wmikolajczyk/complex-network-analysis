@@ -2,20 +2,20 @@ import networkx as nx
 import os
 
 from utils import PrimarySchoolDatasetHandler
-from config import primaryschool_prepared_dataset, primaryschool_dataset, primaryschool_metadata
+from config import primaryschool
 
 # Load network 1 dataset
 
 primary_school_handler = PrimarySchoolDatasetHandler()
 # Prepare dataset file
-if not os.path.exists(primaryschool_prepared_dataset):
-    primary_school_handler.prepare_dataset(primaryschool_dataset, primaryschool_prepared_dataset)
+if not os.path.exists(primaryschool['prepared_dataset']):
+    primary_school_handler.prepare_dataset(primaryschool['dataset'], primaryschool['prepared_dataset'])
 
 # Read metadata
-class_id, gender = primary_school_handler.read_metadata(primaryschool_metadata)
+class_id, gender = primary_school_handler.read_metadata(primaryschool['metadata'])
 
 # Create graph with edges loaded from dataset
-graph = nx.read_edgelist(primaryschool_prepared_dataset, nodetype=int)
+graph = nx.read_edgelist(primaryschool['prepared_dataset'], nodetype=int)
 # Add attributes to nodes
 nx.set_node_attributes(graph, class_id, 'class')
 nx.set_node_attributes(graph, gender, 'gender')
