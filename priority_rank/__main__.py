@@ -24,7 +24,7 @@ nx.set_node_attributes(graph, gender, 'gender')
 dest_file = os.path.join(primaryschool_dataset_dir, 'prepared_data.csv')
 PrimarySchoolDatasetHandler.prepare_training_dataset(
     primaryschool['dataset'], dest_file, gender)
-df = pd.read_csv(dest_file, sep='\t')
+primaryschool_df = pd.read_csv(dest_file, sep='\t')
 
 # Load Workplace dataset
 # Read metadata
@@ -34,7 +34,7 @@ department = WorkplaceDatasetHandler.read_metadata('Datasets/workplace/metadata_
 dest_file2 = 'Datasets/workplace/prepared_data.csv'
 WorkplaceDatasetHandler.prepare_training_dataset(
     'Datasets/workplace/tij_InVS.dat', dest_file2, department)
-df2 = pd.read_csv(dest_file2, sep='\t')
+workplace_df = pd.read_csv(dest_file2, sep='\t')
 
 # Transform network to training dataset
 
