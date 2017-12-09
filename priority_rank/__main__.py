@@ -1,8 +1,10 @@
+import csv
 import networkx as nx
 import os
+import pandas as pd
 
 from utils import PrimarySchoolDatasetHandler
-from config import primaryschool
+from config import primaryschool, primaryschool_dataset_dir
 
 # Load network 1 dataset
 
@@ -22,6 +24,22 @@ nx.set_node_attributes(graph, gender, 'gender')
 
 print(graph.nodes(data=True))
 
+# Prepare csv for dataframe
+dest_file = os.path.join(primaryschool_dataset_dir, 'prepared_data.csv')
+with open(primaryschool['dataset'], 'r') as source:
+    reader = csv.reader(source, delimiter='\t')
+    with open(dest_file, 'w') as result:
+        writer = csv.writer(result, delimiter='\t')
+        writer.writerow(
+            ('class1', 'gender1', 'class2', 'gender2')
+        )
+        for row in reader:
+            writer.writerow(
+                (row[3], gender[int(row[1])], row[4], gender[int(row[2])])
+            )
+
+df = pd.read_csv(dest_file, sep='\t')
+print(df)
 
 # Load network 2 dataset
 
