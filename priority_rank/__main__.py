@@ -10,7 +10,8 @@ primaryschool_prepared_dataset = os.path.join(primaryschool_dataset_dir, 'primar
 if not os.path.exists(primaryschool_prepared_dataset):
     prepare_primaryschool_dataset(primaryschool_dataset, primaryschool_prepared_dataset)
 
-graph = nx.read_edgelist(primaryschool_prepared_dataset)
+graph = nx.read_edgelist(primaryschool_prepared_dataset, nodetype=int)
+print(graph.nodes(data=True))
 # Load network 2 dataset
 
 # Transform network to training dataset
