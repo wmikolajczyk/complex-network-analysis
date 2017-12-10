@@ -22,7 +22,7 @@ department = WorkplaceDatasetHandler.read_metadata(workplace['metadata'])
 
 # Prepare csv for dataframe4
 WorkplaceDatasetHandler.prepare_training_dataset(
-    'Datasets/workplace/tij_InVS.dat', workplace['prepared_data'], department)
+    workplace['dataset'], workplace['prepared_data'], department)
 workplace_df = pd.read_csv(workplace['prepared_data'], sep='\t')
 
 
