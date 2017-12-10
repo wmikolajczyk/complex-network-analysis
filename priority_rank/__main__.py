@@ -2,28 +2,25 @@ import os
 import pandas as pd
 
 from utils import PrimarySchoolDatasetHandler, WorkplaceDatasetHandler
-from config import primaryschool, primaryschool_dataset_dir
+from config import primaryschool, workplace
 
 # Load Primary School dataset
-
 # Read metadata
 class_id, gender = PrimarySchoolDatasetHandler.read_metadata(primaryschool['metadata'])
 
 # Prepare csv for dataframe
-dest_file = os.path.join(primaryschool_dataset_dir, 'prepared_data.csv')
 PrimarySchoolDatasetHandler.prepare_training_dataset(
-    primaryschool['dataset'], dest_file, gender)
-primaryschool_df = pd.read_csv(dest_file, sep='\t')
+    primaryschool['dataset'], primaryschool['prepared_data'], gender)
+primaryschool_df = pd.read_csv(primaryschool['prepared_data'], sep='\t')
 
 # Load Workplace dataset
 # Read metadata
-department = WorkplaceDatasetHandler.read_metadata('Datasets/workplace/metadata_InVS13.txt')
+department = WorkplaceDatasetHandler.read_metadata(workplace['metadata'])
 
 # Prepare csv for dataframe
-dest_file2 = 'Datasets/workplace/prepared_data.csv'
 WorkplaceDatasetHandler.prepare_training_dataset(
-    'Datasets/workplace/tij_InVS.dat', dest_file2, department)
-workplace_df = pd.read_csv(dest_file2, sep='\t')
+    'Datasets/workplace/tij_InVS.dat', workplace['prepared_data'], department)
+workplace_df = pd.read_csv(workplace['prepared_data'], sep='\t')
 
 # Transform network to training dataset
 
