@@ -20,7 +20,7 @@ primaryschool_df = pd.read_csv(primaryschool['prepared_data'], sep='\t')
 # Read metadata
 department = WorkplaceDatasetHandler.read_metadata(workplace['metadata'])
 
-# Prepare csv for dataframe4
+# Prepare csv for dataframe
 WorkplaceDatasetHandler.prepare_training_dataset(
     workplace['dataset'], workplace['prepared_data'], department)
 workplace_df = pd.read_csv(workplace['prepared_data'], sep='\t')
