@@ -1,4 +1,8 @@
 import pandas as pd
+import numpy
+
+from keras.models import Sequential
+from keras.layers import Dense
 
 from utils import PrimarySchoolDatasetHandler, WorkplaceDatasetHandler
 from config import primaryschool, workplace
@@ -35,6 +39,20 @@ primaryschool_df[cat_columns] = primaryschool_df[cat_columns].apply(lambda x: x.
 X = primaryschool_df.iloc[:, 0:2]
 Y = primaryschool_df.iloc[:, 2:]
 
+
+# Very very experimental model
+numpy.random.seed(1)
+model = Sequential()
+model.add(Dense(2, input_dim=2, activation='relu'))
+model.add(Dense(2, activation='relu'))
+model.add(Dense(2, activation='sigmoid'))
+
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+model.fit(X, Y, epochs=10, batch_size=100)
+
+scores = model.evaluate(X, Y)
+print('{}: {}'.format(model.metrics_names[1], scores[1]))
 
 # Priority Rank
 """
