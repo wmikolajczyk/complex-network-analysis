@@ -47,7 +47,7 @@ model.add(Dense(2, input_dim=2, activation='relu'))
 model.add(Dense(2, activation='relu'))
 model.add(Dense(2, activation='sigmoid'))
 
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='mean_squared_error', optimizer='sgd', metrics=['accuracy'])
 
 model.fit(X, Y, epochs=10, batch_size=100)
 
