@@ -3,13 +3,13 @@ import csv
 
 class PrimarySchoolDatasetHandler:
     """
+    http://www.sociopatterns.org/datasets/primary-school-temporal-network-data/
     Prepare primary school dataset
     """
 
     @staticmethod
     def prepare_dataset(dataset_file, dest_file):
         """
-        http://www.sociopatterns.org/datasets/primary-school-temporal-network-data/
         Leave only node edges data
         :return:
         """
@@ -54,7 +54,7 @@ class PrimarySchoolDatasetHandler:
 
 class WorkplaceDatasetHandler:
     """
-
+    http://www.sociopatterns.org/datasets/contacts-in-a-workplace/
     """
 
     @staticmethod
