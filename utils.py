@@ -1,5 +1,28 @@
 import csv
 
+from abc import ABC, abstractmethod
+
+
+class NetworkDatasetHandler(ABC):
+    """
+    Abstract class for handling network datasets
+    """
+
+    def __init__(self, dataset_file, dest_file, metadata_file, variable):
+        self.dataset_file = dataset_file
+        self.dest_file = dest_file
+        self.metadata_file = metadata_file
+        self.variable = variable
+        super(NetworkDatasetHandler, self).__init__()
+
+    @abstractmethod
+    def read_metadata():
+        pass
+
+    @abstractmethod
+    def prepare_training_dataset():
+        pass
+
 
 class PrimarySchoolDatasetHandler:
     """
