@@ -31,7 +31,7 @@ class PrimarySchoolDatasetHandler:
     """
 
     @staticmethod
-    def prepare_dataset(dataset_file, dest_file):
+    def prepare_graph_dataset(dataset_file, dest_file):
         """
         Leave only node edges data
         :return:
