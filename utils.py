@@ -16,11 +16,11 @@ class NetworkDatasetHandler(ABC):
         super(NetworkDatasetHandler, self).__init__()
 
     @abstractmethod
-    def read_metadata():
+    def read_metadata(self):
         pass
 
     @abstractmethod
-    def prepare_training_dataset():
+    def prepare_training_dataset(self):
         pass
 
 
