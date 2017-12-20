@@ -31,7 +31,7 @@ class PrimarySchoolDatasetHandler:
     """
 
     @staticmethod
-    def prepare_graph_dataset(dataset_file, dest_file):
+    def export_edges(dataset_file, dest_file):
         """
         Leave only node edges data
         :return:
@@ -66,20 +66,52 @@ class PrimarySchoolDatasetHandler:
                 }
         return attributes
 
+
     @staticmethod
-    def prepare_training_dataset(dataset_file, dest_file, gender):
-        with open(dataset_file, 'r') as source:
-            reader = csv.reader(source, delimiter='\t')
-            with open(dest_file, 'w') as result:
-                writer = csv.writer(result, delimiter='\t')
-                writer.writerow(
-                    ('class1', 'gender1', 'class2', 'gender2')
-                )
-                for row in reader:
-                    writer.writerow(
-                        (row[3], gender[int(row[1])], row[4],
-                         gender[int(row[2])])
-                    )
+    def export_node_connections(nodes_list, adj_matrix_tril, dest_file):
+        """
+        For debugging
+
+        Create csv with node ids and num of edges between nodes
+        it gives an output with 29161 rows which is ok because
+        242^2 = 29282
+        29282 - 29161 = 121
+        121 is 242 (number of nodes) / 2
+        because we take lower triangle of matrix
+        :return:
+        """
+        with open(dest_file, 'w') as result:
+            writer = csv.writer(result, delimiter='\t')
+            for i in range(1, len(nodes_list)):
+                node1_id = nodes_list[i]
+                for j in range(i):
+                    node2_id = nodes_list[j]
+                    num_of_edges = adj_matrix_tril[i][j]
+                    writer.writerow((node1_id, node2_id, num_of_edges))
+
+    @staticmethod
+    def export_node_connections_attributes(nodes_list, node_attributes, adj_matrix_tril, dest_file):
+        """
+        Create csv with node attributes and num of edges between nodes
+        :return:
+        """
+        with open(dest_file, 'w') as result:
+            writer = csv.writer(result, delimiter='\t')
+            writer.writerow(
+                ('class1', 'gender1', 'class2', 'gender2', 'num_of_connections')
+            )
+            for i in range(1, len(nodes_list)):
+                node1_id = nodes_list[i]
+                node1_attrs = list(node_attributes[node1_id].values())
+                for j in range(i):
+                    node2_id = nodes_list[j]
+                    node2_attrs = list(node_attributes[node2_id].values())
+                    num_of_edges = adj_matrix_tril[i][j]
+                    writer.writerow((
+                        node1_attrs[0], node1_attrs[1],
+                        node2_attrs[0], node2_attrs[1],
+                        num_of_edges
+                    ))
 
 
 class WorkplaceDatasetHandler:

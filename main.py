@@ -6,97 +6,62 @@ import networkx as nx
 
 from keras.models import Sequential
 from keras.layers import Dense
-from keras.wrappers.scikit_learn import KerasRegressor
 
 from utils import PrimarySchoolDatasetHandler, WorkplaceDatasetHandler
 from config import primaryschool, workplace
 
-# Load Primary School dataset
-# Read metadata
-# zbierz atrybuty wierzchołków
+# Primary School
+#   - Metadata
 node_attributes = PrimarySchoolDatasetHandler.read_metadata(primaryschool['metadata'])
+#   - Export edges to csv
+PrimarySchoolDatasetHandler.export_edges(primaryschool['dataset'], primaryschool['edges'])
+#   - Filter lower triangle from adjacency matrix
+graph = nx.read_edgelist(primaryschool['edges'], create_using=nx.MultiGraph(), nodetype=int)
+adj_matrix = nx.adjacency_matrix(graph)
+adj_matrix_tril = np.tril(adj_matrix.todense())
 
-# weź listę wierzchołków z metadata
-graph = nx.read_edgelist(primaryschool['prepared_graph_dataset'], create_using=nx.MultiGraph(), nodetype=int)
-A = nx.adjacency_matrix(graph)
-lowerA = np.tril(A.todense())
 nodes_list = [x for x in graph.nodes.keys()]
 
-# Create csv with node ids and num of edges between nodes
-# it gives an output with 29161 rows which is ok because
-# 242^2 = 29282
-# 29282 - 29161 = 121
-# 121 is 242 (number of nodes) / 2
-# because we take lower triangle of matrix
-with open('Datasets/primary_school/prepared/node_connections.csv', 'w') as result:
-    writer = csv.writer(result, delimiter='\t')
-    for i in range(1, len(nodes_list)):
-        node1_id = nodes_list[i]
-        for j in range(i):
-            node2_id = nodes_list[j]
-            num_of_edges = lowerA[i][j]
-            writer.writerow((node1_id, node2_id, num_of_edges))
+#   - Prepare csv with node attributes and number of connections between nodes
+PrimarySchoolDatasetHandler.export_node_connections_attributes(
+    nodes_list, node_attributes, adj_matrix_tril, primaryschool['prepared_dataset'])
 
-# Create csv with node attributes and num of edges between nodes
-with open('Datasets/primary_school/prepared/node_connections_attributes.csv', 'w') as result:
-    writer = csv.writer(result, delimiter='\t')
-    writer.writerow(
-        ('class1', 'gender1', 'class2', 'gender2', 'num_of_connections')
-    )
-    for i in range(1, len(nodes_list)):
-        node1_id = nodes_list[i]
-        node1_attrs = list(node_attributes[node1_id].values())
-        for j in range(i):
-            node2_id = nodes_list[j]
-            node2_attrs = list(node_attributes[node2_id].values())
-            num_of_edges = lowerA[i][j]
-            writer.writerow((
-                node1_attrs[0], node1_attrs[1],
-                node2_attrs[0], node2_attrs[1],
-                num_of_edges
-            ))
+primaryschool_df = pd.read_csv(primaryschool['prepared_dataset'], sep='\t')
 
-# Prepare csv for dataframe
-# TODO: update and fix
-# PrimarySchoolDatasetHandler.prepare_training_dataset(
-#     primaryschool['dataset'], primaryschool['prepared_data'], gender)
-primaryschool_df = pd.read_csv(primaryschool['prepared_data'], sep='\t')
-
-
-# Transform network to training dataset
-# Primary school
-# Remove 'Unknown' values in gender columns
-# gender1
+#   - Transform data to training dataset
+#       remove 'Unknown' values in gender columns
 female1 = primaryschool_df['gender1'].value_counts()['F']
 female1_prob = female1 / primaryschool_df.shape[0]
 gender_to_replace = ['M', 'F'][female1_prob >= 0.5]
 primaryschool_df['gender1'] = primaryschool_df['gender1'].replace('Unknown', gender_to_replace)
 
-# gender2
 female2 = primaryschool_df['gender2'].value_counts()['F']
 female2_prob = female2 / primaryschool_df.shape[0]
 gender_to_replace = ['M', 'F'][female2_prob >= 0.5]
 primaryschool_df['gender2'] = primaryschool_df['gender2'].replace('Unknown', gender_to_replace)
 
+#   - Mark gender columns as categorical and apply encoding
 primaryschool_df['gender1'] = primaryschool_df['gender1'].astype('category')
 primaryschool_df['gender2'] = primaryschool_df['gender2'].astype('category')
 
 cat_columns = primaryschool_df.select_dtypes(['category']).columns
 primaryschool_df[cat_columns] = primaryschool_df[cat_columns].apply(lambda x: x.cat.codes)
 
+#   - Create dummies from class categorical columns which have more than 2 different values
 primaryschool_df = pd.get_dummies(primaryschool_df, columns=['class1', 'class2'])
 
+#   - Change dataframe column ordering (move num_of_connections to the last index)
 cols = primaryschool_df.columns.tolist()
-# move num_of_connections to the last index
 cols[2], cols[len(cols) - 1] = cols[len(cols) - 1], cols[2]
 
 primaryschool_df = primaryschool_df[cols]
 
+#   - Split dataset to X, Y
 dataset = primaryschool_df.values
 X = dataset[:, 0:24]
 Y = dataset[:, 24]
 
-# Very very experimental model
+#   - Create simple model
 seed=1
 np.random.seed(seed)
 model = Sequential()
@@ -106,10 +71,10 @@ model.add(Dense(output_dim=1))
 
 model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
-# Train
+#   - Train model
 model.fit(X, Y, epochs=10, batch_size=10000)
 
-# Evaluate
+#   - Evaluate model
 scores = model.evaluate(X, Y)
 print('{}: {}'.format(model.metrics_names[1], scores[1]))
 
@@ -128,5 +93,5 @@ department = WorkplaceDatasetHandler.read_metadata(workplace['metadata'])
 
 # Prepare csv for dataframe
 WorkplaceDatasetHandler.prepare_training_dataset(
-    workplace['dataset'], workplace['prepared_data'], department)
-workplace_df = pd.read_csv(workplace['prepared_data'], sep='\t')
+    workplace['dataset'], workplace['prepared_dataset'], department)
+workplace_df = pd.read_csv(workplace['prepared_dataset'], sep='\t')
