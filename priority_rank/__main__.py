@@ -21,6 +21,7 @@ A = nx.adjacency_matrix(graph)
 lowerA = np.tril(A.todense())
 nodes_list = [x for x in graph.nodes.keys()]
 
+# Create csv with node ids and num of edges between nodes
 # it gives an output with 29161 rows which is ok because
 # 242^2 = 29282
 # 29282 - 29161 = 121
@@ -34,6 +35,22 @@ with open('Datasets/primary_school/prepared/node_connections.csv', 'w') as resul
             node2_id = nodes_list[j]
             num_of_edges = lowerA[i][j]
             writer.writerow((node1_id, node2_id, num_of_edges))
+
+# Create csv with node attributes and num of edges between nodes
+with open('Datasets/primary_school/prepared/node_connections_attributes.csv', 'w') as result:
+    writer = csv.writer(result, delimiter='\t')
+    for i in range(1, len(nodes_list)):
+        node1_id = nodes_list[i]
+        node1_attrs = list(node_attributes[node1_id].values())
+        for j in range(i):
+            node2_id = nodes_list[j]
+            node2_attrs = list(node_attributes[node2_id].values())
+            num_of_edges = lowerA[i][j]
+            writer.writerow((
+                node1_attrs[0], node1_attrs[1],
+                node2_attrs[0], node2_attrs[1],
+                num_of_edges
+            ))
 
 # Prepare csv for dataframe
 # TODO: update and fix
