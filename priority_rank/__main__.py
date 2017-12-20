@@ -1,5 +1,8 @@
+# -*- coding: utf-8
+import csv
 import pandas as pd
-import numpy
+import numpy as np
+import networkx as nx
 
 from keras.models import Sequential
 from keras.layers import Dense
@@ -9,11 +12,33 @@ from config import primaryschool, workplace
 
 # Load Primary School dataset
 # Read metadata
-class_id, gender = PrimarySchoolDatasetHandler.read_metadata(primaryschool['metadata'])
+# zbierz atrybuty wierzchołków
+node_attributes = PrimarySchoolDatasetHandler.read_metadata(primaryschool['metadata'])
+
+# weź listę wierzchołków z metadata
+graph = nx.read_edgelist(primaryschool['prepared_graph_dataset'], create_using=nx.MultiGraph(), nodetype=int)
+A = nx.adjacency_matrix(graph)
+lowerA = np.tril(A.todense())
+nodes_list = [x for x in graph.nodes.keys()]
+
+# it gives an output with 29161 rows which is ok because
+# 242^2 = 29282
+# 29282 - 29161 = 121
+# 121 is 242 (number of nodes) / 2
+# because we take lower triangle of matrix
+with open('Datasets/primary_school/prepared/node_connections.csv', 'w') as result:
+    writer = csv.writer(result, delimiter='\t')
+    for i in range(1, len(nodes_list)):
+        node1_id = nodes_list[i]
+        for j in range(i):
+            node2_id = nodes_list[j]
+            num_of_edges = lowerA[i][j]
+            writer.writerow((node1_id, node2_id, num_of_edges))
 
 # Prepare csv for dataframe
-PrimarySchoolDatasetHandler.prepare_training_dataset(
-    primaryschool['dataset'], primaryschool['prepared_data'], gender)
+# TODO: update and fix
+# PrimarySchoolDatasetHandler.prepare_training_dataset(
+#     primaryschool['dataset'], primaryschool['prepared_data'], gender)
 primaryschool_df = pd.read_csv(primaryschool['prepared_data'], sep='\t')
 
 # Load Workplace dataset
@@ -41,7 +66,7 @@ Y = primaryschool_df.iloc[:, 2:]
 
 
 # Very very experimental model
-numpy.random.seed(1)
+np.random.seed(1)
 model = Sequential()
 model.add(Dense(2, input_dim=2, activation='relu'))
 model.add(Dense(2, activation='relu'))
