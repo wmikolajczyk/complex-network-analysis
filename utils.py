@@ -46,18 +46,25 @@ class PrimarySchoolDatasetHandler:
     @staticmethod
     def read_metadata(metadata_file):
         """
-
+        attributes = {
+            node_id: {
+                'attr1': val1,
+                'attr2': val2
+            }
+        }
         :param metadata_file:
         :return:
         """
-        class_id = {}
-        gender = {}
+        attributes = {}
         with open(metadata_file, 'r') as f:
             for line in f:
                 split = line.split()
-                class_id[int(split[0])] = split[1]
-                gender[int(split[0])] = split[2]
-        return class_id, gender
+                node_id = int(split[0])
+                attributes[node_id] = {
+                    'class': split[1],
+                    'gender': split[2]
+                }
+        return attributes
 
     @staticmethod
     def prepare_training_dataset(dataset_file, dest_file, gender):
