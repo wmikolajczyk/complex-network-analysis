@@ -6,6 +6,7 @@ import networkx as nx
 
 from keras.models import Sequential
 from keras.layers import Dense
+from keras.wrappers.scikit_learn import KerasRegressor
 
 from utils import PrimarySchoolDatasetHandler, WorkplaceDatasetHandler
 from config import primaryschool, workplace
@@ -91,20 +92,24 @@ cols[2], cols[len(cols) - 1] = cols[len(cols) - 1], cols[2]
 
 primaryschool_df = primaryschool_df[cols]
 
-X = primaryschool_df.iloc[:, 0:24]
-Y = primaryschool_df.iloc[:, 24]
-
+dataset = primaryschool_df.values
+X = dataset[:, 0:24]
+Y = dataset[:, 24]
 
 # Very very experimental model
-np.random.seed(1)
+seed=1
+np.random.seed(seed)
 model = Sequential()
 model.add(Dense(output_dim=24, input_dim=24, activation='relu'))
+model.add(Dense(output_dim=12, activation='relu'))
 model.add(Dense(output_dim=1))
 
 model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
-model.fit(X, Y, epochs=100)
+# Train
+model.fit(X, Y, epochs=10, batch_size=10000)
 
+# Evaluate
 scores = model.evaluate(X, Y)
 print('{}: {}'.format(model.metrics_names[1], scores[1]))
 
