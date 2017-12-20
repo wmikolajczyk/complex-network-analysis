@@ -98,12 +98,12 @@ Y = primaryschool_df.iloc[:, 24]
 # Very very experimental model
 np.random.seed(1)
 model = Sequential()
-model.add(Dense(output_dim=36, input_dim=24, activation='relu'))
-model.add(Dense(output_dim=1, activation='sigmoid'))
+model.add(Dense(output_dim=24, input_dim=24, activation='relu'))
+model.add(Dense(output_dim=1))
 
-model.compile(loss='mean_squared_error', optimizer='sgd', metrics=['accuracy'])
+model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
-model.fit(X, Y, epochs=10)
+model.fit(X, Y, epochs=100)
 
 scores = model.evaluate(X, Y)
 print('{}: {}'.format(model.metrics_names[1], scores[1]))
