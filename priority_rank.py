@@ -6,7 +6,13 @@ from config import primaryschool
 from utils import PrimarySchoolDatasetHandler
 
 def priority_rank(df, nodes_list, node_attributes):
-# Priority Rank
+	"""
+	Implement priority rank algorithm
+	Generate graph with connections between nodes based on calculated ranking
+	For now it's very simple - ranking is built based on number of connections
+	between nodes in oryginal graph
+	"""
+
     new_graph = nx.MultiGraph()
     num_of_edges = 3
     len_of_ranking = 5
