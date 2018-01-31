@@ -56,15 +56,20 @@ scores = model.evaluate(X, Y)
 print('{}: {}'.format(model.metrics_names[1], scores[1]))
 
 
+# TODO: Priority Rank
+num_of_edges = 3
+len_of_ranking = 5
 
-# Priority Rank
-"""
-for each vertex n
-    compute ranking R (m-lenght)
-    for number of edges for vertex
-        sample vertex t from the ranking
-        add edge vertex - vertex t
-"""
+for node in nodes_list:
+    attributes = node_attributes[node]
+    # compute ranking (len_of_ranking - length) based on vertex attributes
+    # predict attributes of the vertex to connect
+    ranking = [0] # 0 is a placeholder
+    for i in range(0, num_of_edges):
+        # sample vertex t from the ranking
+        ranking_idx = np.random.choice(len(ranking))
+        # graph add edge node - ranking[ranking_idx]
+
 
 # Load Workplace dataset
 # Read metadata
