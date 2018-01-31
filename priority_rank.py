@@ -5,13 +5,14 @@ import numpy as np
 from config import primaryschool
 from utils import PrimarySchoolDatasetHandler
 
+
 def priority_rank(df, nodes_list, node_attributes):
-	"""
-	Implement priority rank algorithm
-	Generate graph with connections between nodes based on calculated ranking
-	For now it's very simple - ranking is built based on number of connections
-	between nodes in oryginal graph
-	"""
+    """
+    Implement priority rank algorithm
+    Generate graph with connections between nodes based on calculated ranking
+    For now it's very simple - ranking is built based on number of connections
+    between nodes in oryginal graph
+    """
 
     new_graph = nx.MultiGraph()
     num_of_edges = 3
@@ -49,18 +50,18 @@ def priority_rank(df, nodes_list, node_attributes):
     return new_graph
 
 if __name__ == '__main__':
-	# TODO: fix gender Unknown values
-	primaryschool_df = pd.read_csv(primaryschool['prepared_dataset'], sep='\t')
-	# Read graph
-	graph = nx.read_edgelist(primaryschool['edges'], create_using=nx.MultiGraph(), nodetype=int)
-	# Create list of node ids
-	nodes_list = [x for x in graph.nodes.keys()]
+    # TODO: fix gender Unknown values
+    primaryschool_df = pd.read_csv(primaryschool['prepared_dataset'], sep='\t')
+    # Read graph
+    graph = nx.read_edgelist(primaryschool['edges'], create_using=nx.MultiGraph(), nodetype=int)
+    # Create list of node ids
+    nodes_list = [x for x in graph.nodes.keys()]
     # Read metadata
-	node_attributes = PrimarySchoolDatasetHandler.read_metadata(primaryschool['metadata'], ['class', 'gender'])
+    node_attributes = PrimarySchoolDatasetHandler.read_metadata(primaryschool['metadata'], ['class', 'gender'])
 
     # Add attributes to the nodes
-	for node_id in nodes_list:
-	    graph.node[node_id].update(node_attributes[node_id])
+    for node_id in nodes_list:
+        graph.node[node_id].update(node_attributes[node_id])
 
-	priority_rank_graph = priority_rank(primaryschool_df, nodes_list, node_attributes)
-	print('Done')
+    priority_rank_graph = priority_rank(primaryschool_df, nodes_list, node_attributes)
+    print('Done')
