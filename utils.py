@@ -101,22 +101,13 @@ class PrimarySchoolDatasetHandler(NetworkDatasetHandler):
                     ))
 
 
-class WorkplaceDatasetHandler:
+class WorkplaceDatasetHandler(NetworkDatasetHandler):
     """
     http://www.sociopatterns.org/datasets/contacts-in-a-workplace/
     """
 
     @staticmethod
-    def read_metadata(metadata_file):
-        department = {}
-        with open(metadata_file, 'r') as f:
-            for line in f:
-                split = line.split()
-                department[int(split[0])] = split[1]
-        return department
-
-    @staticmethod
-    def prepare_training_dataset(dataset_file, dest_file, department):
+    def prepare_training_dataset(dataset_file, dest_file, attributes):
         with open(dataset_file, 'r') as source:
             reader = csv.reader(source, delimiter=' ')
             with open(dest_file, 'w') as result:
@@ -126,5 +117,5 @@ class WorkplaceDatasetHandler:
                 )
                 for row in reader:
                     writer.writerow(
-                        (department[int(row[1])], department[int(row[2])])
+                        (attributes[int(row[1])]['department'], attributes[int(row[2])]['department'])
                     )

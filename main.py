@@ -93,7 +93,7 @@ for each vertex n
 
 # Load Workplace dataset
 # Read metadata
-department = WorkplaceDatasetHandler.read_metadata(workplace['metadata'])
+department = WorkplaceDatasetHandler.read_metadata(workplace['metadata'], ['department'])
 
 # Prepare csv for dataframe
 WorkplaceDatasetHandler.prepare_training_dataset(
