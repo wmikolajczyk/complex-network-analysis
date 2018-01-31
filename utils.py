@@ -15,16 +15,26 @@ class NetworkDatasetHandler(ABC):
         self.variable = variable
         super(NetworkDatasetHandler, self).__init__()
 
-    @abstractmethod
-    def read_metadata(self):
-        pass
+    @staticmethod
+    def read_metadata(metadata_file, attribute_names):
+        attributes = {}
+        with open(metadata_file, 'r') as f:
+            for line in f:
+                split = line.split()
+                node_id = int(split[0])
+
+                attributes[node_id] = {
+                    attribute: split[i]
+                    for i, attribute in enumerate(attribute_names, 1)
+                }
+        return attributes
 
     @abstractmethod
     def prepare_training_dataset(self):
         pass
 
 
-class PrimarySchoolDatasetHandler:
+class PrimarySchoolDatasetHandler(NetworkDatasetHandler):
     """
     http://www.sociopatterns.org/datasets/primary-school-temporal-network-data/
     Prepare primary school dataset
@@ -42,29 +52,6 @@ class PrimarySchoolDatasetHandler:
                 writer = csv.writer(result, delimiter='\t')
                 for row in reader:
                     writer.writerow((row[1], row[2]))
-
-    @staticmethod
-    def read_metadata(metadata_file):
-        """
-        attributes = {
-            node_id: {
-                'attr1': val1,
-                'attr2': val2
-            }
-        }
-        :param metadata_file:
-        :return:
-        """
-        attributes = {}
-        with open(metadata_file, 'r') as f:
-            for line in f:
-                split = line.split()
-                node_id = int(split[0])
-                attributes[node_id] = {
-                    'class': split[1],
-                    'gender': split[2]
-                }
-        return attributes
 
 
     @staticmethod

@@ -12,7 +12,7 @@ from config import primaryschool, workplace
 
 # Primary School
 #   - Metadata
-node_attributes = PrimarySchoolDatasetHandler.read_metadata(primaryschool['metadata'])
+node_attributes = PrimarySchoolDatasetHandler.read_metadata(primaryschool['metadata'], ['class', 'gender'])
 #   - Export edges to csv
 PrimarySchoolDatasetHandler.export_edges(primaryschool['dataset'], primaryschool['edges'])
 #   - Filter lower triangle from adjacency matrix
@@ -56,13 +56,17 @@ cols[2], cols[len(cols) - 1] = cols[len(cols) - 1], cols[2]
 
 primaryschool_df = primaryschool_df[cols]
 
+# Export prepared csv
+# TODO: read this csv
+# primaryschool_df.to_csv('prepared_dataset.csv', index=False)
+
 #   - Split dataset to X, Y
 dataset = primaryschool_df.values
 X = dataset[:, 0:24]
 Y = dataset[:, 24]
 
 #   - Create simple model
-seed=1
+seed = 1
 np.random.seed(seed)
 model = Sequential()
 model.add(Dense(output_dim=24, input_dim=24, activation='relu'))
