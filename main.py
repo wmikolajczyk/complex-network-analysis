@@ -57,6 +57,7 @@ print('{}: {}'.format(model.metrics_names[1], scores[1]))
 
 # TODO: Priority Rank
 """
+df = pd.read_csv(primaryschool['prepared_dataset'], sep='\t')
 df['gender1'] = df['gender1'].replace('Unknown', 'M')
 df['gender2'] = df['gender2'].replace('Unknown', 'M')
 df.groupby(['class1', 'gender1', 'class2', 'gender2']).sum()
@@ -64,21 +65,46 @@ df[(df['class1']=='1A') & (df['gender1']=='M')].groupby(['class1', 'gender1', 'c
 # 1A and M are placeholder values - to do - extract from node
 # get list of dicts / rows in dataframe class1, gender1, num_of_connections - sorted
 df[(df['class1']=='1A') & (df['gender1']=='M')].groupby(['class1', 'gender1', 'class2', 'gender2'])[['num_of_connections']].sum()
+df[(df['class1']=='1A') & (df['gender1']=='M')].groupby(['class1', 'gender1', 'class2', 'gender2'], as_index=False)[['num_of_connections']].sum().sort_values(['num_of_connections'], ascending=False)
 """
+
+# add attributes to the graph
+for node_id in nodes_list:
+    for attribute in node_attributes[node_id].items():
+        graph.node[node_id][attribute[0]] = attribute[1]
+       
 new_graph = nx.MultiGraph()
 num_of_edges = 3
 len_of_ranking = 5
 
+df = pd.read_csv(primaryschool['prepared_dataset'], sep='\t')
+df['gender1'] = df['gender1'].replace('Unknown', 'M')
+df['gender2'] = df['gender2'].replace('Unknown', 'M')
+
+node_number = 0
 for node in nodes_list:
     attributes = node_attributes[node]
+    node_number += 1
+    base_node_number = node_number
+    new_graph.add_node(node_number, **attributes)
     # compute ranking (len_of_ranking - length) based on vertex attributes
     # predict attributes of the vertex to connect
-    ranking = [0] # 0 is a placeholder
+    ranking = df[(df['class1']=='1A') & (df['gender1']=='M')]\
+        .groupby(['class1', 'gender1', 'class2', 'gender2'], as_index=False)[['num_of_connections']]\
+        .sum()\
+        .sort_values(['num_of_connections'], ascending=False)\
+        .head(len_of_ranking)
+
     for i in range(0, num_of_edges):
         # sample vertex t from the ranking
         ranking_idx = np.random.choice(len(ranking))
         # graph add edge node - ranking[ranking_idx]
-
+        new_attributes = ranking.iloc[[ranking_idx]][['class2', 'gender2']]\
+            .rename(columns={'class2': 'class', 'gender2': 'gender'})\
+            .to_dict(orient='records')[0]
+        node_number += 1
+        new_graph.add_node(node_number, **new_attributes)
+        new_graph.add_edge(base_node_number, node_number)
 
 # Load Workplace dataset
 # Read metadata
