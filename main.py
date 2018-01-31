@@ -28,36 +28,9 @@ PrimarySchoolDatasetHandler.export_node_connections_attributes(
 
 primaryschool_df = pd.read_csv(primaryschool['prepared_dataset'], sep='\t')
 
-#   - Transform data to training dataset
-#       remove 'Unknown' values in gender columns
-female1 = primaryschool_df['gender1'].value_counts()['F']
-female1_prob = female1 / primaryschool_df.shape[0]
-gender_to_replace = ['M', 'F'][female1_prob >= 0.5]
-primaryschool_df['gender1'] = primaryschool_df['gender1'].replace('Unknown', gender_to_replace)
+primaryschool_df = PrimarySchoolDatasetHandler.clean_data(primaryschool_df)
 
-female2 = primaryschool_df['gender2'].value_counts()['F']
-female2_prob = female2 / primaryschool_df.shape[0]
-gender_to_replace = ['M', 'F'][female2_prob >= 0.5]
-primaryschool_df['gender2'] = primaryschool_df['gender2'].replace('Unknown', gender_to_replace)
-
-#   - Mark gender columns as categorical and apply encoding
-primaryschool_df['gender1'] = primaryschool_df['gender1'].astype('category')
-primaryschool_df['gender2'] = primaryschool_df['gender2'].astype('category')
-
-cat_columns = primaryschool_df.select_dtypes(['category']).columns
-primaryschool_df[cat_columns] = primaryschool_df[cat_columns].apply(lambda x: x.cat.codes)
-
-#   - Create dummies from class categorical columns which have more than 2 different values
-primaryschool_df = pd.get_dummies(primaryschool_df, columns=['class1', 'class2'])
-
-#   - Change dataframe column ordering (move num_of_connections to the last index)
-cols = primaryschool_df.columns.tolist()
-cols[2], cols[len(cols) - 1] = cols[len(cols) - 1], cols[2]
-
-primaryschool_df = primaryschool_df[cols]
-
-# Export prepared csv
-# TODO: read this csv
+# TODO: export primaryschool_df to csv and read it from csv
 # primaryschool_df.to_csv('prepared_dataset.csv', index=False)
 
 #   - Split dataset to X, Y
@@ -81,6 +54,8 @@ model.fit(X, Y, epochs=10, batch_size=10000)
 #   - Evaluate model
 scores = model.evaluate(X, Y)
 print('{}: {}'.format(model.metrics_names[1], scores[1]))
+
+
 
 # Priority Rank
 """

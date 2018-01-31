@@ -1,4 +1,5 @@
 import csv
+import pandas as pd
 
 from abc import ABC, abstractmethod
 
@@ -7,13 +8,6 @@ class NetworkDatasetHandler(ABC):
     """
     Abstract class for handling network datasets
     """
-
-    def __init__(self, dataset_file, dest_file, metadata_file, variable):
-        self.dataset_file = dataset_file
-        self.dest_file = dest_file
-        self.metadata_file = metadata_file
-        self.variable = variable
-        super(NetworkDatasetHandler, self).__init__()
 
     @staticmethod
     def read_metadata(metadata_file, attribute_names):
@@ -99,6 +93,42 @@ class PrimarySchoolDatasetHandler(NetworkDatasetHandler):
                         node2_attrs[0], node2_attrs[1],
                         num_of_edges
                     ))
+
+    @staticmethod
+    def clean_data(primaryschool_df):
+        #   - Transform data to training dataset
+        #       remove 'Unknown' values in gender columns
+        female1 = primaryschool_df['gender1'].value_counts()['F']
+        female1_prob = female1 / primaryschool_df.shape[0]
+        gender_to_replace = ['M', 'F'][female1_prob >= 0.5]
+        primaryschool_df['gender1'] = primaryschool_df['gender1'].replace(
+            'Unknown', gender_to_replace)
+
+        female2 = primaryschool_df['gender2'].value_counts()['F']
+        female2_prob = female2 / primaryschool_df.shape[0]
+        gender_to_replace = ['M', 'F'][female2_prob >= 0.5]
+        primaryschool_df['gender2'] = primaryschool_df['gender2'].replace(
+            'Unknown', gender_to_replace)
+
+        #   - Mark gender columns as categorical and apply encoding
+        primaryschool_df['gender1'] = primaryschool_df['gender1'].astype(
+            'category')
+        primaryschool_df['gender2'] = primaryschool_df['gender2'].astype(
+            'category')
+
+        cat_columns = primaryschool_df.select_dtypes(['category']).columns
+        primaryschool_df[cat_columns] = primaryschool_df[cat_columns].apply(
+            lambda x: x.cat.codes)
+
+        #   - Create dummies from class categorical columns which have more than 2 different values
+        primaryschool_df = pd.get_dummies(primaryschool_df,
+                                          columns=['class1', 'class2'])
+
+        #   - Change dataframe column ordering (move num_of_connections to the last index)
+        cols = primaryschool_df.columns.tolist()
+        cols[2], cols[len(cols) - 1] = cols[len(cols) - 1], cols[2]
+
+        return primaryschool_df[cols]
 
 
 class WorkplaceDatasetHandler(NetworkDatasetHandler):
