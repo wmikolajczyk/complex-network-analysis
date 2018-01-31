@@ -78,8 +78,8 @@ num_of_edges = 3
 len_of_ranking = 5
 
 df = pd.read_csv(primaryschool['prepared_dataset'], sep='\t')
-df['gender1'] = df['gender1'].replace('Unknown', 'M')
-df['gender2'] = df['gender2'].replace('Unknown', 'M')
+# df['gender1'] = df['gender1'].replace('Unknown', 'M')
+# df['gender2'] = df['gender2'].replace('Unknown', 'M')
 
 node_number = 0
 for node in nodes_list:
@@ -89,12 +89,12 @@ for node in nodes_list:
     new_graph.add_node(node_number, **attributes)
     # compute ranking (len_of_ranking - length) based on vertex attributes
     # predict attributes of the vertex to connect
-    ranking = df[(df['class1']=='1A') & (df['gender1']=='M')]\
+    
+    ranking = df[(df['class1']==attributes['class']) & (df['gender1']==attributes['gender'])]\
         .groupby(['class1', 'gender1', 'class2', 'gender2'], as_index=False)[['num_of_connections']]\
         .sum()\
         .sort_values(['num_of_connections'], ascending=False)\
         .head(len_of_ranking)
-
     for i in range(0, num_of_edges):
         # sample vertex t from the ranking
         ranking_idx = np.random.choice(len(ranking))
