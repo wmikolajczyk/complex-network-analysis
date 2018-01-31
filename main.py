@@ -55,8 +55,17 @@ model.fit(X, Y, epochs=10, batch_size=10000)
 scores = model.evaluate(X, Y)
 print('{}: {}'.format(model.metrics_names[1], scores[1]))
 
-
 # TODO: Priority Rank
+"""
+df['gender1'] = df['gender1'].replace('Unknown', 'M')
+df['gender2'] = df['gender2'].replace('Unknown', 'M')
+df.groupby(['class1', 'gender1', 'class2', 'gender2']).sum()
+df[(df['class1']=='1A') & (df['gender1']=='M')].groupby(['class1', 'gender1', 'class2', 'gender2']).sum()
+# 1A and M are placeholder values - to do - extract from node
+# get list of dicts / rows in dataframe class1, gender1, num_of_connections - sorted
+df[(df['class1']=='1A') & (df['gender1']=='M')].groupby(['class1', 'gender1', 'class2', 'gender2'])[['num_of_connections']].sum()
+"""
+new_graph = nx.MultiGraph()
 num_of_edges = 3
 len_of_ranking = 5
 
