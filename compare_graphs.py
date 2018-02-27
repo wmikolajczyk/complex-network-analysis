@@ -8,7 +8,6 @@ from scipy import stats
 
 def compare(graph1, graph2):
     """
-    TODO: speed up - why it takes so much time?
     Compare two graphs
 
     Args:
@@ -48,7 +47,16 @@ def compare(graph1, graph2):
         nx.average_shortest_path_length(
             graph1) - nx.average_shortest_path_length(graph2))
     result['diameter'] = abs(nx.diameter(graph1) - nx.diameter(graph2))
-    result['degree_centrailty'] = '?'
+    graph1_max_degree = max([v for k, v in graph1.degree])
+    graph1_degree_deltas = [max_degree - v for k, v in graph1.degree]
+    graph1_degree_centralization = sum(graph1_degree_deltas) / max(
+        graph1_degree_deltas)
+    graph2_max_degree = max([v for k, v in graph2.degree])
+    graph2_degree_deltas = [max_degree - v for k, v in graph2.degree]
+    graph2_degree_centralization = sum(graph2_degree_deltas) / max(
+        graph2_degree_deltas)
+    result['degree_centralization'] = abs(
+        graph1_degree_centralization - graph2_degree_centralization)
     result['density'] = abs(nx.density(graph1) - nx.density(graph2))
 
     return result
