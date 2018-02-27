@@ -48,11 +48,11 @@ def compare(graph1, graph2):
             graph1) - nx.average_shortest_path_length(graph2))
     result['diameter'] = abs(nx.diameter(graph1) - nx.diameter(graph2))
     graph1_max_degree = max([v for k, v in graph1.degree])
-    graph1_degree_deltas = [max_degree - v for k, v in graph1.degree]
+    graph1_degree_deltas = [graph1_max_degree - v for k, v in graph1.degree]
     graph1_degree_centralization = sum(graph1_degree_deltas) / max(
         graph1_degree_deltas)
     graph2_max_degree = max([v for k, v in graph2.degree])
-    graph2_degree_deltas = [max_degree - v for k, v in graph2.degree]
+    graph2_degree_deltas = [graph2_max_degree - v for k, v in graph2.degree]
     graph2_degree_centralization = sum(graph2_degree_deltas) / max(
         graph2_degree_deltas)
     result['degree_centralization'] = abs(
