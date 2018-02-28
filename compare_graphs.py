@@ -43,10 +43,18 @@ def compare(graph1, graph2):
     result['pagerank'] = stats.ks_2samp(graph1_pagerank, graph2_pagerank)
 
     # absolute value of global graph measurements subtraction
-    result['average_shortest_path_length'] = abs(
-        nx.average_shortest_path_length(
-            graph1) - nx.average_shortest_path_length(graph2))
-    result['diameter'] = abs(nx.diameter(graph1) - nx.diameter(graph2))
+    try:
+        result['average_shortest_path_length'] = abs(
+            nx.average_shortest_path_length(
+                graph1) - nx.average_shortest_path_length(graph2))
+    except nx.NetworkXError as e:
+        # graph is not connected - it's possible for Watts-Strogats
+        print('Cannot compute average_shortest_path_length - {}'.format(e))
+    try:
+        result['diameter'] = abs(nx.diameter(graph1) - nx.diameter(graph2))
+    except nx.NetworkXError as e:
+        # graph is not connected - it's possible for Watts-Strogats
+        print('Cannot compute diameter - {}'.format(e))
     graph1_max_degree = max([v for k, v in graph1.degree])
     graph1_degree_deltas = [graph1_max_degree - v for k, v in graph1.degree]
     graph1_degree_centralization = sum(graph1_degree_deltas) / max(
