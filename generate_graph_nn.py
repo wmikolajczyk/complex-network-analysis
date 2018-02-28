@@ -47,57 +47,64 @@ def graph_to_training_set(graph):
             rows.append(row)
     return rows
 
-# Create graph, attach attributes -> to DataFrame
-n1, p1 = 10, 0.8
 
-graph1 = nx.gnp_random_graph(n1, p1, seed=93)
-attach_attributes(graph1)
+def generate_graph_by_nn(graph, num_edges):
+    graph_data = graph_to_training_set(graph)
+    df = pd.DataFrame(graph_data)
+    # Split DF into X and y
+    X_train = df.iloc[:, :8]
+    y_train = df.iloc[:, 8]
+    # Create model
+    model = Sequential()
+    model.add(Dense(units=8, input_dim=8, activation='sigmoid'))
+    model.add(Dense(units=1))
 
-graph1_data = graph_to_training_set(graph1)
-df = pd.DataFrame(graph1_data)
+    model.compile(loss='binary_crossentropy', optimizer='sgd')
 
-# Split DF into X and y
-X_train = df.iloc[:, :8]
-y_train = df.iloc[:, 8]
+    # Train model
+    model.fit(X_train, y_train, epochs=100)
 
-# Create model
-model = Sequential()
-model.add(Dense(units=8, input_dim=8, activation='sigmoid'))
-model.add(Dense(units=1))
+    # Generate new graph
+    new_graph = nx.empty_graph(n=graph.number_of_nodes())
 
-model.compile(loss='binary_crossentropy', optimizer='sgd')
+    node_similarities = {}
 
-# Train model
-model.fit(X_train, y_train, epochs=100)
+    for u in graph.nodes:
+        node_similarities[u] = []
 
-# Generate new graph
-new_graph = nx.empty_graph(n=graph1.number_of_nodes())
+        for v in graph.nodes:
+            d = {}
+            d.update(get_attributes(graph.nodes[u].items(), 'node1_'))
+            d.update(get_attributes(graph.nodes[v].items(), 'node2_'))
 
-num_edges = 3
+            feature_values = pd.DataFrame([d], columns=d.keys())
 
-node_similarities = {}
+            node_similarities[u].append(
+                (v, model.predict(feature_values)[0][0]))
 
-for u in graph1.nodes:
-    node_similarities[u] = []
+    h_n = sum([1 / k for k in range(1, graph.number_of_nodes() + 1)])
 
-    for v in graph1.nodes:
-        d = {}
-        d.update(get_attributes(graph1.nodes[u].items(), 'node1_'))
-        d.update(get_attributes(graph1.nodes[v].items(), 'node2_'))
+    for u in graph.nodes:
+        ranking = [n for (n, sim) in
+                   sorted(node_similarities[u], key=lambda x: x[1],
+                          reverse=True)]
+        prob = [1 / (h_n * idx) for idx, elem in enumerate(ranking, start=1)]
 
-        feature_values = pd.DataFrame([d], columns=d.keys())
+        target_nodes = np.random.choice(ranking, size=num_edges, replace=False,
+                                        p=prob)
 
-        node_similarities[u].append((v, model.predict(feature_values)[0][0]))
+        for tn in target_nodes:
+            new_graph.add_edge(u, tn)
 
-h_n = sum([1/k for k in range(1, graph1.number_of_nodes() + 1)])
+    return new_graph
 
-for u in graph1.nodes:
-    ranking = [n for (n, sim) in sorted(node_similarities[u], key=lambda x: x[1], reverse=True)]
-    prob = [1/(h_n * idx) for idx, elem in enumerate(ranking, start=1)]
+if __name__ == '__main__':
+    # Create graph, attach attributes -> to DataFrame
+    n1, p1 = 10, 0.8
 
-    target_nodes = np.random.choice(ranking, size=num_edges, replace=False, p=prob)
+    graph1 = nx.gnp_random_graph(n1, p1, seed=93)
+    attach_attributes(graph1)
 
-    for tn in target_nodes:
-        new_graph.add_edge(u, tn)
+    new_graph = generate_graph_by_nn(graph1, 3)
 
-print(nx.adj_matrix(new_graph).todense())
+    print(nx.adj_matrix(new_graph).todense())
