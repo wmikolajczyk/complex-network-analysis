@@ -2,6 +2,8 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 
+from collections import defaultdict
+
 from keras.models import Sequential
 from keras.layers import Dense
 
@@ -72,34 +74,38 @@ def generate_graph_by_nn(model, graph, num_edges):
     # Generate new graph
     new_graph = nx.empty_graph(n=graph.number_of_nodes())
 
-    node_similarities = {}
+    # Dict containing node ranking list for each node
+    node_similarities = defaultdict(list)
 
     for u in graph.nodes:
         attrs1 = get_attributes(graph.nodes[u].items(), 'node1_')
-        node_similarities[u] = []
-
         for v in graph.nodes:
             attrs2 = get_attributes(graph.nodes[v].items(), 'node2_')
+            # Dict with node1 and node2 attributes with node prefix
             d = {}
             d.update(attrs1)
             d.update(attrs2)
-
+            # Node attributes to DataFrame
             feature_values = pd.DataFrame([d], columns=d.keys())
-
+            # Probability of connection between nodes based on their attributes
             node_similarities[u].append(
                 (v, model.predict(feature_values)[0][0]))
 
-    h_n = sum([1 / k for k in range(1, graph.number_of_nodes() + 1)])
+    harmonic_number = sum([1 / k for k in range(1, graph.number_of_nodes() + 1)])
 
     for u in graph.nodes:
+        # Node ranking sorted in descending similarity order
         ranking = [n for (n, sim) in
                    sorted(node_similarities[u], key=lambda x: x[1],
                           reverse=True)]
-        prob = [1 / (h_n * idx) for idx, elem in enumerate(ranking, start=1)]
-
+        # Probability of connection to node on each position at the ranking
+        probability = [1 / (harmonic_number * idx)
+                       for idx, elem in enumerate(ranking, start=1)]
+        # Choose randomly k (num_edges) nodes to make connections with
         target_nodes = np.random.choice(ranking, size=num_edges, replace=False,
-                                        p=prob)
+                                        p=probability)
 
+        # Add edges to new graph
         for tn in target_nodes:
             new_graph.add_edge(u, tn)
 
