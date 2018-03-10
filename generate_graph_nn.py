@@ -55,6 +55,8 @@ def get_trained_model(graph):
     X_train = df.iloc[:, :8]
     y_train = df.iloc[:, 8]
     # Create model
+    # Set seed for model recurrency
+    np.random.seed(93)
     model = Sequential()
     model.add(Dense(units=8, input_dim=8, activation='sigmoid'))
     model.add(Dense(units=1))
@@ -73,12 +75,14 @@ def generate_graph_by_nn(model, graph, num_edges):
     node_similarities = {}
 
     for u in graph.nodes:
+        attrs1 = get_attributes(graph.nodes[u].items(), 'node1_')
         node_similarities[u] = []
 
         for v in graph.nodes:
+            attrs2 = get_attributes(graph.nodes[v].items(), 'node2_')
             d = {}
-            d.update(get_attributes(graph.nodes[u].items(), 'node1_'))
-            d.update(get_attributes(graph.nodes[v].items(), 'node2_'))
+            d.update(attrs1)
+            d.update(attrs2)
 
             feature_values = pd.DataFrame([d], columns=d.keys())
 
