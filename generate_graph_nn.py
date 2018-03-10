@@ -48,7 +48,7 @@ def graph_to_training_set(graph):
     return rows
 
 
-def generate_graph_by_nn(graph, num_edges):
+def get_trained_model(graph):
     graph_data = graph_to_training_set(graph)
     df = pd.DataFrame(graph_data)
     # Split DF into X and y
@@ -63,7 +63,10 @@ def generate_graph_by_nn(graph, num_edges):
 
     # Train model
     model.fit(X_train, y_train, epochs=100)
+    return model
 
+
+def generate_graph_by_nn(model, graph, num_edges):
     # Generate new graph
     new_graph = nx.empty_graph(n=graph.number_of_nodes())
 
