@@ -28,29 +28,3 @@ def test_generative_graph(graph_func, *args, **kwargs):
         plt.figure(2)
         nx.draw(new_graph, with_labels=True)
         plt.show()
-
-
-erdos_renyi_params = [
-    {'n': 30, 'p': 0.05},
-    {'n': 30, 'p': 0.1},
-    {'n': 30, 'p': 0.3}
-]
-for param in erdos_renyi_params:
-    test_generative_graph(nx.erdos_renyi_graph, param['n'], param['p'], show_graph=True)
-
-
-watts_strogatz_params = [
-    {'n': 30, 'k': 2, 'p': 0.05},
-    {'n': 30, 'k': 2, 'p': 0.1},
-    {'n': 30, 'k': 2, 'p': 0.3}
-]
-for param in watts_strogatz_params:
-    test_generative_graph(nx.watts_strogatz_graph, param['n'], param['k'], param['p'], show_graph=True)
-
-barabasi_albert_params = [
-    {'n': 30, 'm': 1},
-    {'n': 30, 'm': 2},
-    {'n': 30, 'm': 5}
-]
-for param in barabasi_albert_params:
-    test_generative_graph(nx.barabasi_albert_graph, param['n'], param['m'], show_graph=True)
