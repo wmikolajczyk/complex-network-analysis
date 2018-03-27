@@ -29,7 +29,7 @@ def test_generative_graph(graph_func, *args, **kwargs):
         nx.draw(new_graph, with_labels=True)
         plt.show()
 
-# Probability of connection between nodes
+
 erdos_renyi_params = [
     {'n': 30, 'p': 0.05},
     {'n': 30, 'p': 0.1},
@@ -38,7 +38,7 @@ erdos_renyi_params = [
 for param in erdos_renyi_params:
     test_generative_graph(nx.erdos_renyi_graph, param['n'], param['p'], show_graph=True)
 
-# Probability of
+
 watts_strogatz_params = [
     {'n': 30, 'k': 2, 'p': 0.05},
     {'n': 30, 'k': 2, 'p': 0.1},
