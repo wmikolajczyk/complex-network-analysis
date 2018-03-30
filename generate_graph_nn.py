@@ -110,14 +110,3 @@ def generate_graph_by_nn(model, graph, num_edges):
             new_graph.add_edge(u, tn)
 
     return new_graph
-
-if __name__ == '__main__':
-    # Create graph, attach attributes -> to DataFrame
-    n1, p1 = 10, 0.8
-
-    graph1 = nx.gnp_random_graph(n1, p1, seed=93)
-    attach_attributes(graph1)
-
-    new_graph = generate_graph_by_nn(graph1, 3)
-
-    print(nx.adj_matrix(new_graph).todense())

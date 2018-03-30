@@ -68,13 +68,3 @@ def compare(graph1, graph2):
     result['density_delta'] = abs(nx.density(graph1) - nx.density(graph2))
 
     return result
-
-if __name__ == '__main__':
-    # Example usage of compare function
-    n1, p1 = 100, 0.8
-    n2, p2 = 100, 0.7
-
-    graph1 = nx.gnp_random_graph(n1, p1, seed=93)
-    graph2 = nx.gnp_random_graph(n2, p2, seed=95)
-
-    print(compare(graph1, graph2))
