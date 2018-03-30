@@ -66,7 +66,7 @@ def get_trained_model(graph):
     model.compile(loss='binary_crossentropy', optimizer='sgd')
 
     # Train model
-    model.fit(X_train, y_train, epochs=100)
+    model.fit(X_train, y_train, epochs=100, verbose=0)
     return model
 
 
