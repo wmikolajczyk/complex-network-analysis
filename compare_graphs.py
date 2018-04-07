@@ -114,5 +114,8 @@ def average_comparison(comparison_list):
 
     result = {}
     for key in comparison_result:
-        result[key] = comparison_result[key]['value'] / comparison_result[key]['num_of_items']
+        try:
+            result[key] = comparison_result[key]['value'] / comparison_result[key]['num_of_items']
+        except ZeroDivisionError:
+            result[key] = None
     return result
