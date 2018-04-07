@@ -23,11 +23,6 @@ def recreate_graph(graph):
     new_graph = generate_graph_by_nn(model, graph, avg_num_edges)
     return new_graph
 
-def print_comparsion_result(comparsion_dict):
-    for key, val in comparsion_dict.items():
-        print('{}: {}'.format(key, val))
-
-
 def draw_graph(graph):
     nx.draw(graph, with_labels=True)
     plt.show()
