@@ -68,3 +68,51 @@ def compare(graph1, graph2):
     result['density_delta'] = abs(nx.density(graph1) - nx.density(graph2))
 
     return result
+
+def average_comparison(comparison_list):
+    comparison_result = {
+        'degree_centrality_delta': {
+            'num_of_items': 0,
+            'value': 0,
+        },
+        'closeness_centrality_delta': {
+            'num_of_items': 0,
+            'value': 0,
+        },
+        'betweenness_centrality_delta': {
+            'num_of_items': 0,
+            'value': 0,
+        },
+        'pagerank_delta': {
+            'num_of_items': 0,
+            'value': 0,
+        },
+        'average_shortest_path_length_delta': {
+            'num_of_items': 0,
+            'value': 0,
+        },
+        'diameter_delta': {
+            'num_of_items': 0,
+            'value': 0,
+        },
+        'degree_centralization_delta': {
+            'num_of_items': 0,
+            'value': 0,
+        },
+        'density_delta': {
+            'num_of_items': 0,
+            'value': 0,
+        },
+    }
+    for comparison in comparison_list:
+        for key, value in comparison.items():
+            # Ks_2sampResult -> KS statistic and p-value - choose p-value
+            if isinstance(value, stats.stats.Ks_2sampResult):
+                value = value.pvalue
+            comparison_result[key]['num_of_items'] += 1
+            comparison_result[key]['value'] += value
+
+    result = {}
+    for key in comparison_result:
+        result[key] = comparison_result[key]['value'] / comparison_result[key]['num_of_items']
+    return result
