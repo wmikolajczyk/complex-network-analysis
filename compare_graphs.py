@@ -6,6 +6,34 @@ from collections import OrderedDict
 from scipy import stats
 
 
+def get_graph_measurements(graph):
+    graph_measurements = OrderedDict()
+
+    # measurement is a list of node values
+    graph_measurements['degree_centrality'] = list(nx.degree_centrality(graph).values())
+    graph_measurements['closeness_centrality'] = list(nx.closeness_centrality(graph).values())
+    graph_measurements['betweenness_centrality'] = list(nx.betweenness_centrality(graph).values())
+    graph_measurements['pagerank'] = list(nx.pagerank(graph).values())
+    # measurement is a number
+    try:
+        graph_measurements['average_shortest_path_length'] = nx.average_shortest_path_length(graph)
+    except nx.NetworkXError as e:
+        graph_measurements['average_shortest_path_length'] = None
+        print('Cannot compute average_shortest_path_length - {}'.format(e))
+    try:
+        graph_measurements['diameter'] = nx.diameter(graph)
+    except nx.NetworkXError as e:
+        graph_measurements['diameter'] = None
+        print('Cannot compute diameter - {}'.format(e))
+
+    max_degree = max([v for k, v in graph.degree])
+    degree_deltas = [max_degree - v for k, v in graph.degree]
+    graph_measurements['degree_centralization'] = sum(degree_deltas) / max(degree_deltas)
+    graph_measurements['density'] = nx.density(graph)
+
+    return graph_measurements
+
+
 def compare(graph1, graph2):
     """
     Compare two graphs
