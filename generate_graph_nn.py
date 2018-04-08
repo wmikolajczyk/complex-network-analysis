@@ -9,22 +9,6 @@ from keras.layers import Dense
 
 
 # FUNCTIONS
-def attach_attributes(graph):
-    degree_centralities = nx.degree_centrality(graph)
-    betweenness_centralities = nx.betweenness_centrality(graph)
-    closeness_centralities = nx.closeness_centrality(graph)
-    pageranks = nx.pagerank(graph)
-
-    for node_id in graph.nodes:
-        node_attributes = {
-            'degree_centrality': degree_centralities[node_id],
-            'betweenness_centrality': betweenness_centralities[node_id],
-            'closeness_centrality': closeness_centralities[node_id],
-            'pagerank': pageranks[node_id]
-        }
-        graph.node[node_id].update(node_attributes)
-
-
 def get_attributes(node_attributes, prefix):
     attributes_dict = {
         prefix + key: value
