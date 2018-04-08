@@ -54,7 +54,7 @@ def get_trained_model(graph):
     return model
 
 
-def generate_graph_by_nn(model, graph, num_edges):
+def generate_by_priority_rank(model, graph, num_edges):
     # Generate new graph
     new_graph = nx.empty_graph(n=graph.number_of_nodes())
 

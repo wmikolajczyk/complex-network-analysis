@@ -1,7 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
-from generate_graph_nn import get_trained_model, generate_graph_by_nn
+from generate_graph_nn import get_trained_model, generate_by_priority_rank
 
 
 def attach_attributes(graph):
@@ -36,7 +36,7 @@ def recreate_graph(graph):
     # train a model
     model = get_trained_model(graph)
     # generate new graph using trained model
-    new_graph = generate_graph_by_nn(model, graph, avg_num_edges)
+    new_graph = generate_by_priority_rank(model, graph, avg_num_edges)
     return new_graph
 
 
