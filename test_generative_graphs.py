@@ -1,7 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
-from compare_graphs import compare
 from generate_graph_nn import attach_attributes, get_trained_model, generate_graph_by_nn
 
 
