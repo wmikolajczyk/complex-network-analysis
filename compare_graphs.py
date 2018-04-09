@@ -7,7 +7,7 @@ from scipy import stats
 
 
 MEASUREMENTS = {
-    'list' : [
+    'list': [
         'degree_centrality',
         'closeness_centrality',
         'betweenness_centrality',

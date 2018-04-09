@@ -32,7 +32,7 @@ def get_trained_model(graph):
     X_train = df.iloc[:, :8]
     y_train = df.iloc[:, 8]
     # Create model
-    # Set seed for model recurrency
+    # Set seed for model reproducibility
     np.random.seed(93)
     model = Sequential()
     model.add(Dense(units=8, input_dim=8, activation='sigmoid'))
