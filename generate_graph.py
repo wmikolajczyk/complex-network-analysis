@@ -1,6 +1,6 @@
 import networkx as nx
 
-from train_neural_net import get_trained_model
+from neural_net_model import get_trained_model
 from priority_rank import generate_by_priority_rank
 
 
