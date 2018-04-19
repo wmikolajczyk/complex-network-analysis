@@ -66,7 +66,7 @@ def compare_measurements(graph1_measurements, graph2_measurements):
     for measurement in MEASUREMENTS['value']:
         try:
             results[measurement] = abs(
-                graph1_measurements[measurement] - graph2_measurements[measurement])
+                graph1_measurements[measurement] - graph2_measurements[measurement]) / graph1_measurements[measurement]
         except TypeError:
             # results[measurement] = None
             pass
