@@ -6,6 +6,8 @@ from collections import OrderedDict
 from scipy import stats
 
 
+PVALUE_THRESHOLD = 0.05
+
 MEASUREMENTS = {
     'list': [
         'degree_centrality',
