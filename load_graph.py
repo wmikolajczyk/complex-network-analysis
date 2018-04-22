@@ -67,7 +67,10 @@ def download_dataset(network_name):
         os.makedirs(download_dir)
 
     filepath = os.path.join(download_dir, dataset['filename'])
-    wget.download(dataset['url'], out=filepath)
+    if not os.path.exists(filepath):
+        wget.download(dataset['url'], out=filepath)
+    else:
+        print('skipping {} - already exists'.format(network_name))
     return filepath
 
 
@@ -76,10 +79,13 @@ def extract_dataset(filepath, network_name):
     if not os.path.exists(datasets_dir):
         os.makedirs(datasets_dir)
 
-    with tarfile.open(filepath) as archive:
-        archive.extractall(datasets_dir)
-
-    return os.path.join(datasets_dir, network_name)
+    filepath = os.path.join(datasets_dir, network_name)
+    if not os.path.exists(filepath):
+        with tarfile.open(filepath) as archive:
+            archive.extractall(datasets_dir)
+    else:
+        print('skipping {} - already exists'.format(network_name))
+    return filepath
 
 
 def file_gen(f_name):
@@ -112,7 +118,9 @@ def load_graph(extracted_filepath):
             ent_files.append(filename)
 
     if len(out_files) != 1:
-        raise ValueError('There should be exactly one out. file')
+        print('There should be exactly one out. file')
+        print(out_files)
+        return
     adj_file = out_files[0]
 
     print('Loading graph...')
@@ -149,8 +157,10 @@ def load_graph(extracted_filepath):
 checked_dataset_with_attrs = defaultdict(list)
 
 for dataset_name in available_datasets:
+    print('Processing {}'.format(dataset_name))
     graph = get_network_from_konect(dataset_name)
     if not graph:
+        print('no graph.')
         continue
     # check first node
     num_of_attrs = len(graph.nodes[0])
@@ -158,5 +168,6 @@ for dataset_name in available_datasets:
         print(dataset_name)
         checked_dataset_with_attrs[num_of_attrs].append(dataset_name)
 
-with open('best_datasets.pkl', 'wb') as file:
-    pickle.dump(checked_dataset_with_attrs, file)
+    print(checked_dataset_with_attrs)
+    with open('best_datasets.pkl', 'wb') as file:
+        pickle.dump(checked_dataset_with_attrs, file)
