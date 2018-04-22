@@ -4,8 +4,10 @@ import re
 import requests
 import tarfile
 import wget
+import pickle
 
 from bs4 import BeautifulSoup
+from collections import defaultdict
 
 from generate_graph import attach_attributes
 
@@ -41,6 +43,8 @@ available_datasets = get_available_datasets()
 
 def get_network_from_konect(network_name):
     downloaded_filepath = download_dataset(network_name)
+    if not downloaded_filepath:
+        return
     extracted_filepath = extract_dataset(downloaded_filepath, network_name)
     graph = load_graph(extracted_filepath)
     return graph
@@ -51,6 +55,11 @@ def download_dataset(network_name):
         dataset = available_datasets[network_name]
     except KeyError:
         print('Dataset does not exist')
+        return
+
+    max_filesize = 10000000  # 10MB
+    if int(requests.head(dataset['url']).headers['content-length']) > max_filesize:
+        print('skipping {} - larger than {}b'.format(network_name, max_filesize))
         return
 
     download_dir = 'downloads'
@@ -110,8 +119,8 @@ def load_graph(extracted_filepath):
     graph = nx.read_adjlist(os.path.join(extracted_filepath, adj_file), comments='%')
     graph = nx.convert_node_labels_to_integers(graph)
 
-    print('Attaching attributes (graph measurements)...')
-    attach_attributes(graph)
+    # print('Attaching attributes (graph measurements)...')
+    # attach_attributes(graph)
 
     print('Attaching real attributes...')
 
@@ -137,5 +146,17 @@ def load_graph(extracted_filepath):
     return graph
 
 
-for dataset_name in dataset_names:
+checked_dataset_with_attrs = defaultdict(list)
+
+for dataset_name in available_datasets:
     graph = get_network_from_konect(dataset_name)
+    if not graph:
+        continue
+    # check first node
+    num_of_attrs = len(graph.nodes[0])
+    if num_of_attrs:
+        print(dataset_name)
+        checked_dataset_with_attrs[num_of_attrs].append(dataset_name)
+
+with open('best_datasets.pkl', 'wb') as file:
+    pickle.dump(checked_dataset_with_attrs, file)
