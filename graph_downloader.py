@@ -5,6 +5,7 @@ import wget
 import pickle
 
 from bs4 import BeautifulSoup
+from collections import defaultdict
 from shutil import copyfile
 
 base_url = 'http://konect.uni-koblenz.de/downloads/'
@@ -24,7 +25,7 @@ for row in tbody.findAll('tr'):
 dataset_links = [base_url + partial_link for partial_link in dataset_partial_links]
 
 dl_dirname = 'downloaded'
-datasets_with_attrs = []
+datasets_with_attrs = defaultdict(list)
 selected_dirname = 'selected'
 
 
@@ -55,8 +56,8 @@ def find_datasets_with_attrs():
         with tarfile.open(filepath) as archive:
             count = len([member for member in archive if member.isreg()])
         if count > 3:
-            datasets_with_attrs.append(filepath)
-
+            datasets_with_attrs[count].append(filepath)
+    print(datasets_with_attrs)
     with open('datasets_with_attrs.pkl', 'wb') as file:
         pickle.dump(datasets_with_attrs, file)
 
@@ -68,5 +69,9 @@ def select_datasets():
     with open('datasets_with_attrs.pkl', 'rb') as file:
         datasets_with_attrs = pickle.load(file)
 
-    for filepath in datasets_with_attrs:
-        copyfile(filepath, os.path.join(selected_dirname, filepath.split('/')[-1]))
+    for filepath in datasets_with_attrs[5]:
+        # copyfile(filepath, os.path.join(selected_dirname, filepath.split('/')[-1]))
+        with tarfile.open(filepath) as archive:
+            archive.extractall('best_graphs')
+
+select_datasets()
