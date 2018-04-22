@@ -79,13 +79,13 @@ def extract_dataset(filepath, network_name):
     if not os.path.exists(datasets_dir):
         os.makedirs(datasets_dir)
 
-    filepath = os.path.join(datasets_dir, network_name)
-    if not os.path.exists(filepath):
+    dest_filepath = os.path.join(datasets_dir, network_name)
+    if not os.path.exists(dest_filepath):
         with tarfile.open(filepath) as archive:
             archive.extractall(datasets_dir)
     else:
         print('skipping {} - already exists'.format(network_name))
-    return filepath
+    return dest_filepath
 
 
 def file_gen(f_name):
