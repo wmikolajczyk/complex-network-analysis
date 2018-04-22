@@ -79,6 +79,13 @@ def file_gen(f_name):
                 yield line.rstrip()
 
 
+def file_len(f_name):
+    with open(f_name) as f:
+        for i, l in enumerate(f):
+            pass
+    return i + 1
+
+
 def load_graph(extracted_filepath):
     """
     out - adjacency matrix
@@ -96,7 +103,6 @@ def load_graph(extracted_filepath):
             ent_files.append(filename)
 
     if len(out_files) != 1:
-        import pdb; pdb.set_trace()
         raise ValueError('There should be exactly one out. file')
     adj_file = out_files[0]
 
@@ -112,7 +118,9 @@ def load_graph(extracted_filepath):
     ent_gens = []
     for ent in ent_files:
         ent_filepath = os.path.join(extracted_filepath, ent)
-        ent_gens.append(file_gen(ent_filepath))
+        # append when there are attribute for each node
+        if file_len(ent_filepath) == graph.number_of_nodes():
+            ent_gens.append(file_gen(ent_filepath))
 
     # each line in ent. file contains node attribute (ordered)
     # so it's very important to ensure that graph.nodes are in ascending ordering
@@ -131,4 +139,3 @@ def load_graph(extracted_filepath):
 
 for dataset_name in dataset_names:
     graph = get_network_from_konect(dataset_name)
-    import pdb; pdb.set_trace()
