@@ -88,14 +88,14 @@ def extract_dataset(filepath, network_name):
     return dest_filepath
 
 
-def file_gen(f_name):
-        with open(f_name) as f:
+def file_gen(f_name, encoding='utf-8'):
+        with open(f_name, encoding=encoding) as f:
             for line in f:
                 yield line.rstrip()
 
 
-def file_len(f_name):
-    with open(f_name) as f:
+def file_len(f_name, encoding='utf-8'):
+    with open(f_name, encoding=encoding) as f:
         for i, l in enumerate(f):
             pass
     return i + 1
@@ -136,8 +136,17 @@ def load_graph(extracted_filepath):
     for ent in ent_files:
         ent_filepath = os.path.join(extracted_filepath, ent)
         # append when there are attribute for each node
-        if file_len(ent_filepath) == graph.number_of_nodes():
-            ent_gens.append(file_gen(ent_filepath))
+        try:
+            if file_len(ent_filepath) == graph.number_of_nodes():
+                ent_gens.append(file_gen(ent_filepath))
+            else:
+                print('Attribute file error {}'.format(ent))
+        except UnicodeDecodeError:
+            print('Trying windows-1250 encoding..')
+            if file_len(ent_filepath, encoding='windows-1250') == graph.number_of_nodes():
+                ent_gens.append(file_gen(ent_filepath, encoding='windows-1250'))
+            else:
+                print('Attribute file error {}'.format(ent))
 
     # each line in ent. file contains node attribute (ordered)
     # so it's very important to ensure that graph.nodes are in ascending ordering
