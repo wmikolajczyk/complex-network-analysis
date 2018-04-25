@@ -130,14 +130,14 @@ def load_graph(extracted_filepath):
         return
     adj_file = out_files[0]
 
-    # print('Loading graph...')
+    print('Loading graph...')
     graph = nx.read_adjlist(os.path.join(extracted_filepath, adj_file), comments='%')
     graph = nx.convert_node_labels_to_integers(graph)
 
-    # print('Attaching attributes (graph measurements)...')
-    # attach_attributes(graph)
+    print('Attaching attributes (graph measurements)...')
+    attach_attributes(graph)
 
-    # print('Attaching real attributes...')
+    print('Attaching real attributes...')
 
     ent_gens = []
     for ent in ent_files:
