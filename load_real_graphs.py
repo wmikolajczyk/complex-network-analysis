@@ -47,11 +47,9 @@ def get_available_datasets():
     return available_datasets
 
 
-available_datasets = get_available_datasets()
-
-
 def get_network_from_konect(network_name):
-    downloaded_filepath = download_dataset(network_name)
+    available_datasets = get_available_datasets()
+    downloaded_filepath = download_dataset(network_name, available_datasets)
     if not downloaded_filepath:
         return
     extracted_filepath = extract_dataset(downloaded_filepath, network_name)
@@ -59,7 +57,7 @@ def get_network_from_konect(network_name):
     return graph
 
 
-def download_dataset(network_name):
+def download_dataset(network_name, available_datasets):
     try:
         dataset = available_datasets[network_name]
     except KeyError:
@@ -172,20 +170,21 @@ def load_graph(extracted_filepath):
     return graph
 
 
-checked_dataset_with_attrs = defaultdict(list)
+def get_num_of_attrs_for_datasets(available_datasets):
+    checked_dataset_with_attrs = defaultdict(list)
 
-for dataset_name in available_datasets:
-    print('Processing {}'.format(dataset_name))
-    graph = get_network_from_konect(dataset_name)
-    if not graph:
-        print('no graph.')
-        continue
-    # check first node
-    num_of_attrs = len(graph.nodes[0])
-    if num_of_attrs:
-        print(dataset_name)
-        checked_dataset_with_attrs[num_of_attrs].append(dataset_name)
+    for dataset_name in available_datasets:
+        print('Processing {}'.format(dataset_name))
+        graph = get_network_from_konect(dataset_name)
+        if not graph:
+            print('no graph.')
+            continue
+        # check first node
+        num_of_attrs = len(graph.nodes[0])
+        if num_of_attrs:
+            print(dataset_name)
+            checked_dataset_with_attrs[num_of_attrs].append(dataset_name)
 
-    # print(checked_dataset_with_attrs)
-    with open('best_datasets.pkl', 'wb') as file:
-        pickle.dump(checked_dataset_with_attrs, file)
+        # print(checked_dataset_with_attrs)
+        with open('best_datasets.pkl', 'wb') as file:
+            pickle.dump(checked_dataset_with_attrs, file)
