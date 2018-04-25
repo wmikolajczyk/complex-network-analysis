@@ -11,10 +11,19 @@ from collections import defaultdict
 
 from generate_graph import attach_attributes
 
-dataset_names = [
-    'moreno_crime',
-    'unicodelang'
-]
+
+# petster-hamster? - required preprocessing data
+CHOOSEN_DATASETS = {
+    # number_of_attrs: [network_name1, network_name2, ...]
+    1: [
+        'adjnoun_adjacency', 'advogato', 'cfinder-google', 'discogs_lgenre',
+        'moreno_blogs', 'moreno_seventh', 'moreno_sheep', 'subelj_cora',
+        'subelj_euroroad', 'subelj_jdk', 'subelj_jung-j'
+    ],
+    2: [
+        'github', 'moreno_crime'
+    ]
+}
 
 
 def get_available_datasets():
