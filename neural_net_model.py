@@ -31,18 +31,33 @@ def graph_to_training_set(graph):
 def get_trained_model(graph):
     graph_data = graph_to_training_set(graph)
     df = pd.DataFrame(graph_data)
+    # number of attributes without target
+    number_of_attrs = len(df.columns) - 1
+
+    # map categorical to integers (cat codes)
+    # with assumption that object type columns is string categorical
+    coltypes_dict = dict(df.dtypes)
+    str_columns = [key for key in coltypes_dict if coltypes_dict[key] == 'object']
+    for column in str_columns:
+        df[column] = df[column].astype('category')
+    cat_columns = df.select_dtypes(['category']).columns
+    df[cat_columns] = df[cat_columns].apply(lambda x: x.cat.codes)
+
+    # TODO: normalize!
+
     # Split DF into X and y
-    X_train = df.iloc[:, :8]
-    y_train = df.iloc[:, 8]
+    X_train = df.iloc[:, :number_of_attrs]
+    y_train = df.iloc[:, number_of_attrs]
+
     # Create model
     # Set seed for model reproducibility
     np.random.seed(93)
     model = Sequential()
-    model.add(Dense(units=8, input_dim=8, activation='sigmoid'))
+    model.add(Dense(units=number_of_attrs, input_dim=number_of_attrs, activation='sigmoid'))
     model.add(Dense(units=1))
 
     model.compile(loss='binary_crossentropy', optimizer='sgd')
 
     # Train model
-    model.fit(X_train, y_train, epochs=100, verbose=0)
+    model.fit(X_train, y_train, epochs=10)
     return model
