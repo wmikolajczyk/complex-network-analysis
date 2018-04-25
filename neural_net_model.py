@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 
 from keras.models import Sequential
+from collections import OrderedDict
+
 from keras.layers import Dense
 
 from graph_utils import get_attributes
@@ -16,11 +18,12 @@ def graph_to_training_set(graph):
         attrs1 = get_attributes(graph.node[node1_id].items(), 'node1_')
         for node2_id in idxs:
             attrs2 = get_attributes(graph.node[node2_id].items(), 'node2_')
-            row = {
-                'num_of_conn': adj_matrix[node1_id, node2_id]
-            }
+            # to ensure that num_of_conn will be the last key
+            # which is important when creating dataframe (last column - target)
+            row = OrderedDict()
             row.update(attrs1)
             row.update(attrs2)
+            row['num_of_conn'] = adj_matrix[node1_id, node2_id]
             rows.append(row)
     return rows
 
