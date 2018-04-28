@@ -10,7 +10,7 @@ from keras.layers import Dense
 from graph_utils import get_attributes
 
 
-def graph_to_training_set(graph):
+def graph_to_training_set(graph, for_recreate=False):
     adj_matrix = nx.adjacency_matrix(graph)
     idxs = range(adj_matrix.shape[0])
     rows = []
@@ -23,17 +23,12 @@ def graph_to_training_set(graph):
             row = OrderedDict()
             row.update(attrs1)
             row.update(attrs2)
-            row['num_of_conn'] = adj_matrix[node1_id, node2_id]
+            if not for_recreate:
+                row['num_of_conn'] = adj_matrix[node1_id, node2_id]
             rows.append(row)
-    return rows
 
-
-def get_trained_model(graph):
-    graph_data = graph_to_training_set(graph)
-    df = pd.DataFrame(graph_data)
-    # number of attributes without target
-    number_of_attrs = len(df.columns) - 1
-
+    df = pd.DataFrame(rows)
+    # TODO: replace with hot one encoding
     # map categorical to integers (cat codes)
     # with assumption that object type columns is string categorical
     coltypes_dict = dict(df.dtypes)
@@ -43,7 +38,15 @@ def get_trained_model(graph):
     cat_columns = df.select_dtypes(['category']).columns
     df[cat_columns] = df[cat_columns].apply(lambda x: x.cat.codes)
 
-    # TODO: normalize!
+    return df
+
+
+def get_trained_model(graph):
+    df = graph_to_training_set(graph)
+    # number of attributes without target
+    number_of_attrs = len(df.columns) - 1
+
+    # TODO: normalize! (?)
 
     # Split DF into X and y
     X_train = df.iloc[:, :number_of_attrs]
