@@ -4,13 +4,18 @@ import pandas as pd
 
 from keras.models import Sequential
 from collections import OrderedDict
-
+from sklearn import preprocessing
 from keras.layers import Dense
 
 from graph_utils import get_attributes
 
 
 def graph_to_dataframe(graph, remove_target_col=False):
+    """
+    Used for:
+        - learning model
+        - predicting while generating new graph
+    """
     adj_matrix = nx.adjacency_matrix(graph)
     idxs = range(adj_matrix.shape[0])
     rows = []
@@ -48,8 +53,18 @@ def graph_to_dataframe(graph, remove_target_col=False):
             cat_columns.append(column)
         else:
             df.drop(column, axis=1, inplace=True)
-
+            print('dropped column {}'.format(column))
+    # hot-one encoding for categorical features
     df = pd.get_dummies(df, columns=cat_columns)
+    # reorder columns to ensure that target column is last
+    # colnames are like node1_attrname, node2_attrname, num_of_conn
+    # so alphabetical order is correct
+    df = df.reindex_axis(sorted(df.columns), axis=1)
+    # feature values normalization
+    min_max_scaler = preprocessing.MinMaxScaler()
+    np_scaled = min_max_scaler.fit_transform(df)
+    df = pd.DataFrame(np_scaled)
+
     return df
 
 
@@ -57,8 +72,6 @@ def get_trained_model(graph):
     df = graph_to_dataframe(graph)
     # number of attributes without target
     number_of_attrs = len(df.columns) - 1
-
-    # TODO: normalize! (?)
 
     # Split DF into X and y
     X_train = df.iloc[:, :number_of_attrs]
