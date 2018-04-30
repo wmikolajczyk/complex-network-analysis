@@ -96,3 +96,11 @@ def average_comparison(comparison_list):
         except ZeroDivisionError:
             result[key] = None
     return result
+
+
+def print_comparison_result(comparison_result):
+    for key, value in comparison_result.items():
+        if key in MEASUREMENTS['list']:
+            print('(KS test p-value) {} = {}'.format(key, value))
+        if key in MEASUREMENTS['value']:
+            print('(abs distance) {} = {}'.format(key, value))
