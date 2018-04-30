@@ -10,7 +10,7 @@ from keras.layers import Dense
 from graph_utils import get_attributes
 
 
-def graph_to_training_set(graph, for_recreate=False):
+def graph_to_dataframe(graph, for_recreate=False):
     adj_matrix = nx.adjacency_matrix(graph)
     idxs = range(adj_matrix.shape[0])
     rows = []
@@ -50,12 +50,11 @@ def graph_to_training_set(graph, for_recreate=False):
             df.drop(column, axis=1, inplace=True)
 
     df = pd.get_dummies(df, columns=cat_columns)
-
     return df
 
 
 def get_trained_model(graph):
-    df = graph_to_training_set(graph)
+    df = graph_to_dataframe(graph)
     # number of attributes without target
     number_of_attrs = len(df.columns) - 1
 
