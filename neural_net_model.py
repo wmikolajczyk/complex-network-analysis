@@ -28,15 +28,28 @@ def graph_to_training_set(graph, for_recreate=False):
             rows.append(row)
 
     df = pd.DataFrame(rows)
-    # TODO: replace with hot one encoding
+
+    # all attributes are strings (object type)
+    # try to convert them to numeric (ignore errors - string which cannot be converted)
+    df = df.apply(pd.to_numeric, errors='ignore')
+
     # map categorical to integers (cat codes)
     # with assumption that object type columns is string categorical
     coltypes_dict = dict(df.dtypes)
     str_columns = [key for key in coltypes_dict if coltypes_dict[key] == 'object']
     for column in str_columns:
         df[column] = df[column].astype('category')
-    cat_columns = df.select_dtypes(['category']).columns
-    df[cat_columns] = df[cat_columns].apply(lambda x: x.cat.codes)
+    num_of_nodes = graph.number_of_nodes()
+    cat_columns = []
+    for column in df.select_dtypes(['category']).columns:
+        # if number of unique values in column is equal to number of nodes in graph
+        # then it's id / name attribute which should be dropped
+        if df[column].nunique() != num_of_nodes:
+            cat_columns.append(column)
+        else:
+            df.drop(column, axis=1, inplace=True)
+
+    df = pd.get_dummies(df, columns=cat_columns)
 
     return df
 
