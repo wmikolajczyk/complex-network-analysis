@@ -10,7 +10,7 @@ from keras.layers import Dense
 from graph_utils import get_attributes
 
 
-def graph_to_dataframe(graph, for_recreate=False):
+def graph_to_dataframe(graph, remove_target_col=False):
     adj_matrix = nx.adjacency_matrix(graph)
     idxs = range(adj_matrix.shape[0])
     rows = []
@@ -23,7 +23,7 @@ def graph_to_dataframe(graph, for_recreate=False):
             row = OrderedDict()
             row.update(attrs1)
             row.update(attrs2)
-            if not for_recreate:
+            if not remove_target_col:
                 row['num_of_conn'] = adj_matrix[node1_id, node2_id]
             rows.append(row)
 

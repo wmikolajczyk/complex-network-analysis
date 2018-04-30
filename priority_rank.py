@@ -15,7 +15,7 @@ def generate_by_priority_rank(model, graph, num_edges):
     # Dict containing node ranking list for each node
     node_similarities = defaultdict(list)
 
-    df = graph_to_dataframe(graph, for_recreate=True)
+    df = graph_to_dataframe(graph, remove_target_col=True)
     x = df.shape[0] / num_of_nodes
     for i, row in enumerate(df.iterrows()):
         # int(1.1) -> 1
