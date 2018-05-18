@@ -1,7 +1,8 @@
+import networkx as nx
 import numpy as np
 import pandas as pd
 
-from collections import OrderedDict
+from collections import defaultdict, OrderedDict
 
 from keras.models import Sequential
 from keras.layers import Dense
@@ -71,3 +72,27 @@ def graph_to_dataframe(graph):
 # drop if amount of unique values = num of nodes -> id column
 # get hot-one encoding (get_dummies)
 # minmax scaler - normalize values
+
+
+def recreate_by_priority_rank(graph, df, model):
+    num_edges = round(graph.number_of_edges() / graph.number_of_nodes())
+
+    num_of_nodes = graph.number_of_nodes()
+    new_graph = nx.empty_graph(n=num_of_nodes)
+    # drop target column
+    df.drop(['num_of_edges'], axis=1, inplace=True)
+    # predict num_edges
+    pred_df = model.predict(df)
+    # get dict of node rankings
+    #   node_id: [(node0_id, num_edges), (node1_id, num_edges)]
+    node_similarities = defaultdict(list)
+    for node1_id in graph.nodes:
+        for node2_id in graph.nodes:
+            index = node1_id * num_of_nodes + node2_id
+            node_similarities[node1_id].append(
+                (node2_id, pred_df.item(index)))
+    ## TODO: harmonic number - rankings, probability, target nodes add edges
+
+
+
+    return new_graph
