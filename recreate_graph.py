@@ -35,11 +35,11 @@ def get_trained_model(df):
     model.add(Dense(
         units=number_of_attrs,
         input_dim=number_of_attrs,
-        activation='sigmoid'))
+        activation='relu'))
     model.add(Dense(units=1))
 
-    model.compile(loss='binary_crossentropy', optimizer='sgd')
-    model.fit(X_train, y_train, epochs=10)
+    model.compile(loss='mean_squared_error', optimizer='sgd')
+    model.fit(X_train, y_train, epochs=100, batch_size=10)
     return model
 
 
@@ -87,7 +87,7 @@ def recreate_by_priority_rank(graph, df, model):
     harmonic_number = sum([
         1 / k for k in range(1, num_of_nodes + 1)
     ])
-
+    print(y_pred)
     for node1_id in graph.nodes:
         # get dict of node rankings
         #   [(node0_id, num_edges), (node1_id, num_edges)]
