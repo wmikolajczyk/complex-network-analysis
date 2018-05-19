@@ -2,10 +2,12 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict
 
 from keras.models import Sequential
 from keras.layers import Dense
+
+from tensorflow import set_random_seed
 
 
 def recreate_graph(graph):
@@ -30,6 +32,8 @@ def get_trained_model(df):
 
     # set seed for model reproducibility
     np.random.seed(93)
+    # tensorflow random seed
+    set_random_seed(2)
 
     model = Sequential()
     model.add(Dense(
