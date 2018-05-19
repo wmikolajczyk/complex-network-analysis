@@ -16,7 +16,7 @@ def recreate_graph(graph):
     # train a model
     model = get_trained_model(df)
     # generate new graph using trained model
-    new_graph = generate_by_priority_rank(model, graph, avg_num_edges)
+    new_graph = recreate_by_priority_rank(model, graph, avg_num_edges)
     return new_graph
 
 
@@ -76,23 +76,41 @@ def graph_to_dataframe(graph):
 
 def recreate_by_priority_rank(graph, df, model):
     num_edges = round(graph.number_of_edges() / graph.number_of_nodes())
-
     num_of_nodes = graph.number_of_nodes()
+
     new_graph = nx.empty_graph(n=num_of_nodes)
     # drop target column
     df.drop(['num_of_edges'], axis=1, inplace=True)
     # predict num_edges
     pred_df = model.predict(df)
-    # get dict of node rankings
-    #   node_id: [(node0_id, num_edges), (node1_id, num_edges)]
-    node_similarities = defaultdict(list)
+    # used when calculating probability ranking
+    harmonic_number = sum([
+        1 / k for k in range(1, num_of_nodes + 1)
+    ])
+
     for node1_id in graph.nodes:
+        # get dict of node rankings
+        #   [(node0_id, num_edges), (node1_id, num_edges)]
+        similarities = []
         for node2_id in graph.nodes:
-            index = node1_id * num_of_nodes + node2_id
-            node_similarities[node1_id].append(
-                (node2_id, pred_df.item(index)))
-    ## TODO: harmonic number - rankings, probability, target nodes add edges
-
-
+            node_index = node1_id * num_of_nodes + node2_id
+            similarities.append(node2_id, pred_df.item(node_index))
+        # Node ranking sorted in descending similarity order
+        ranking = [
+            node2_id
+            for (node2_id, similarity) in
+            sorted(similarities, key=lambda x: x[1], reverse=True)
+        ]
+        # Probability of connection to node on each position at the ranking
+        probability = [
+            1 / (harmonic_number * index)
+            for index, _ in enumerate(ranking, start=1)
+        ]
+        # Choose randomly k (num_edges) nodes to make connections with
+        target_nodes = np.random.choice(ranking, size=num_edges,
+                                        replace=False, p=probability)
+        # Add edges to new graph
+        for target_node in target_nodes:
+            new_graph.add_edge(node1_id, target_node)
 
     return new_graph
