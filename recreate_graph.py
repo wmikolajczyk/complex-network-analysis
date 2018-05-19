@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 from keras.models import Sequential
 from keras.layers import Dense
-
+from sklearn import preprocessing
 from tensorflow import set_random_seed
 
 
@@ -68,6 +68,10 @@ def graph_to_dataframe(graph):
             rows.append(row)
 
     df = pd.DataFrame(rows)
+    # minmax scaler - normalize values
+    min_max_scaler = preprocessing.MinMaxScaler()
+    scaled_values = min_max_scaler.fit_transform(df)
+    df.loc[:, :] = scaled_values
     return df
 
 # TODO:
@@ -75,7 +79,6 @@ def graph_to_dataframe(graph):
 # handle categorical columns (str)
 # drop if amount of unique values = num of nodes -> id column
 # get hot-one encoding (get_dummies)
-# minmax scaler - normalize values
 
 
 def recreate_by_priority_rank(graph, df, model):
