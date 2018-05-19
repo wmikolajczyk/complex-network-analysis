@@ -88,6 +88,16 @@ def compare_graph_measurements(graph1_measurements, graph2_measurements):
             else:
                 val = abs(
                     graph1_measurements[measurement] -
-                        graph2_measurements[measurement])
+                    graph2_measurements[measurement])
         results[measurement] = val
     return results
+
+
+def print_comparison_results(comparison_results):
+    for measurement, m_type in MEASUREMENTS.items():
+        if m_type == 'list':
+            msg = '(pvalue) '
+        else:
+            msg = '(value) '
+        msg += '{}: {}'.format(measurement, comparison_results[measurement])
+        print(msg)
