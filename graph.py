@@ -83,7 +83,7 @@ def compare_graph_measurements(graph1_measurements, graph2_measurements):
                 graph2_measurements[measurement]).pvalue
         else:
             if (graph1_measurements[measurement] is None or
-                    graph2_measurements is None):
+                    graph2_measurements[measurement] is None):
                 val = None
             else:
                 val = abs(
