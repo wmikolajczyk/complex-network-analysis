@@ -80,9 +80,9 @@ def recreate_by_priority_rank(graph, df, model):
 
     new_graph = nx.empty_graph(n=num_of_nodes)
     # drop target column
-    df.drop(['num_of_edges'], axis=1, inplace=True)
+    X_test = df.drop(['num_of_edges'], axis=1)
     # predict num_edges
-    pred_df = model.predict(df)
+    y_pred = model.predict(X_test)
     # used when calculating probability ranking
     harmonic_number = sum([
         1 / k for k in range(1, num_of_nodes + 1)
@@ -94,7 +94,7 @@ def recreate_by_priority_rank(graph, df, model):
         similarities = []
         for node2_id in graph.nodes:
             node_index = node1_id * num_of_nodes + node2_id
-            similarities.append(node2_id, pred_df.item(node_index))
+            similarities.append((node2_id, y_pred.item(node_index)))
         # Node ranking sorted in descending similarity order
         ranking = [
             node2_id
