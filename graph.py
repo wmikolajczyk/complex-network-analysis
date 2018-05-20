@@ -55,7 +55,12 @@ def get_graph_measurements(graph):
 
     max_degree = max([v for k, v in graph.degree])
     degree_deltas = [max_degree - v for k, v in graph.degree]
-    graph_measurements['degree_centralization'] = sum(degree_deltas) / max(degree_deltas)
+
+    try:
+        graph_measurements['degree_centralization'] = sum(degree_deltas) / max(degree_deltas)
+    except ZeroDivisionError as e:
+        graph_measurements['degree_centralization'] = None
+        print('Cannot compute degree centralization - {}'.format(e))
     graph_measurements['density'] = nx.density(graph)
 
     return graph_measurements
