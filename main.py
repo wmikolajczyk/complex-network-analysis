@@ -17,7 +17,7 @@ def draw_graph(graph):
     plt.show()
 
 
-params = {'n': 100, 'm': 2}
+params = {'n': 15, 'm': 10}
 
 graph = generate_graph(nx.barabasi_albert_graph, params)
 attach_graph_attributes(graph)
@@ -37,6 +37,7 @@ print_comparison_results(x)
 plt.figure(1)
 nx.draw(graph, with_labels=True)
 plt.figure(2)
-nx.draw_shell(new_graph, with_labels=True)
+nx.draw(new_graph, with_labels=True)
 plt.show()
-#import pdb; pdb.set_trace()
+print(graph.number_of_edges())
+print(new_graph.number_of_edges())
