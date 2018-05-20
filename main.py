@@ -12,10 +12,6 @@ from recreate_graph import graph_to_dataframe, get_trained_model, \
 def minMax(x):
     return pd.Series(index=['min','max'],data=[x.min(),x.max()])
 
-def draw_graph(graph):
-    nx.draw(graph, with_labels=True)
-    plt.show()
-
 
 params = {'n': 15, 'm': 10}
 
