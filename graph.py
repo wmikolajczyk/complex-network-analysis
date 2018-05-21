@@ -99,10 +99,15 @@ def compare_graph_measurements(graph1_measurements, graph2_measurements):
 
 
 def print_comparison_results(comparison_results):
+    ks_test_threshold = 0.05
     for measurement, m_type in MEASUREMENTS.items():
+        result = '{}: {}'.format(measurement, comparison_results[measurement])
         if m_type == 'list':
-            msg = '(pvalue) '
+            if comparison_results[measurement] > ks_test_threshold:
+                passed_ks_test = True
+            else:
+                passed_ks_test = False
+            msg = '(pvalue) {}, [KS-test passed: {}]'.format(result, passed_ks_test)
         else:
-            msg = '(value) '
-        msg += '{}: {}'.format(measurement, comparison_results[measurement])
+            msg = '(value) {}'.format(result)
         print(msg)
