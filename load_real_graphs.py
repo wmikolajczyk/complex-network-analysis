@@ -41,7 +41,7 @@ def get_available_datasets():
             if 'tsv' in partial_url:
                 dataset_name = re.search('([^/]+).tar.bz2', partial_url).group(1)
                 available_datasets[dataset_name] = {
-                    'filename': re.search('tsv/([^/]+)', partial_url)[1],
+                    'filename': re.search('tsv/([^/]+)', partial_url).group(1),
                     'url': base_url + partial_url
                 }
     return available_datasets
