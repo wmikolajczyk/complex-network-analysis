@@ -104,7 +104,7 @@ def print_comparison_results(comparison_results):
 
     for measurement, m_type in MEASUREMENTS.items():
         if comparison_results[measurement] is not None:
-            result_val = '{:.2f}'.format(comparison_results[measurement])
+            result_val = '{:.12f}'.format(comparison_results[measurement])
         else:
             result_val = None
         result = '{}: {}'.format(measurement, result_val)
@@ -118,5 +118,5 @@ def print_comparison_results(comparison_results):
                 passed_test = comparison_results[measurement] < abs_dist_max_threshold
             else:
                 passed_test = None
-        msg = '{:18} {:35} [passed: {}]'.format(name, result, passed_test)
+        msg = '{:18} {:46} [passed: {}]'.format(name, result, passed_test)
         print(msg)
