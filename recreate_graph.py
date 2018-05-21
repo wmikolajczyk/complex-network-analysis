@@ -34,6 +34,7 @@ def get_trained_model(df):
     set_random_seed(2)
 
     model = Sequential()
+    
     model.add(Dense(
         units=number_of_attrs,
         input_dim=number_of_attrs,
@@ -45,6 +46,7 @@ def get_trained_model(df):
     model.add(Dense(units=1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='sgd')
+
     model.fit(X_train, y_train, epochs=128, batch_size=64)
     return model
 
@@ -70,17 +72,31 @@ def graph_to_dataframe(graph):
             rows.append(row)
 
     df = pd.DataFrame(rows)
+
+    # all attributes are strings (object type)
+    # try to convert them to numeric (ignore errors - string which cannot be converted)
+    df = df.apply(pd.to_numeric, errors='ignore')
+    # handle categorical columns (str)
+    coltypes_dict = dict(df.dtypes)
+    str_columns = [key for key in coltypes_dict
+                   if coltypes_dict[key] == 'object']
+    for column in str_columns:
+        df[column] = df[column].astype('category')
+    for column in df.select_dtypes(['category']).columns:
+        if df[column].nunique() == graph.number_of_nodes():
+            df.drop(column, axis=1, inplace=True)
+            print('dropped column {}'.format(column))
+    df = pd.get_dummies(df, columns=df.select_dtypes(['category']).columns)
+    # reorder columns to ensure that target column is last
+    # colnames are like node1_attrname, node2_attrname, num_of_conn
+    # so alphabetical order is correct
+    df = df.reindex(sorted(df.columns), axis=1)
+
     # minmax scaler - normalize values
     min_max_scaler = preprocessing.MinMaxScaler()
     scaled_values = min_max_scaler.fit_transform(df)
     df.loc[:, :] = scaled_values
     return df
-
-# TODO:
-# dataframe processing
-# handle categorical columns (str)
-# drop if amount of unique values = num of nodes -> id column
-# get hot-one encoding (get_dummies)
 
 
 def recreate_by_priority_rank(graph, df, model):
