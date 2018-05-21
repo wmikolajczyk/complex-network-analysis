@@ -93,7 +93,7 @@ def compare_graph_measurements(graph1_measurements, graph2_measurements):
             else:
                 val = abs(
                     graph1_measurements[measurement] -
-                    graph2_measurements[measurement])
+                    graph2_measurements[measurement]) / graph1_measurements[measurement]
         results[measurement] = val
     return results
 
@@ -107,7 +107,7 @@ def print_comparison_results(comparison_results):
                 passed_ks_test = True
             else:
                 passed_ks_test = False
-            msg = '(pvalue) {}, [KS-test passed: {}]'.format(result, passed_ks_test)
+            msg = '(KS-test pvalue) {}, [KS-test passed: {}]'.format(result, passed_ks_test)
         else:
             msg = '(value) {}'.format(result)
         print(msg)
