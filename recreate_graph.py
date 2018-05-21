@@ -34,14 +34,14 @@ def get_trained_model(df):
     set_random_seed(2)
 
     model = Sequential()
-    
+
     model.add(Dense(
         units=number_of_attrs,
         input_dim=number_of_attrs,
         activation='relu'))
     model.add(Dense(
-        units=round(number_of_attrs/2),
-        input_dim=round(number_of_attrs/2),
+        units=round(number_of_attrs / 2),
+        input_dim=round(number_of_attrs / 2),
         activation='relu'))
     model.add(Dense(units=1, activation='sigmoid'))
 
