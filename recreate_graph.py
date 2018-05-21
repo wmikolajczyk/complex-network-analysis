@@ -45,7 +45,7 @@ def get_trained_model(df):
     model.add(Dense(units=1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='sgd')
-    model.fit(X_train, y_train, epochs=100, batch_size=10)
+    model.fit(X_train, y_train, epochs=128, batch_size=64)
     return model
 
 
@@ -84,7 +84,7 @@ def graph_to_dataframe(graph):
 
 
 def recreate_by_priority_rank(graph, df, model):
-    # num_edges = round(graph.number_of_edges() / graph.number_of_nodes())
+    num_edges = round(graph.number_of_edges() / graph.number_of_nodes())
     num_of_nodes = graph.number_of_nodes()
 
     new_graph = nx.empty_graph(n=num_of_nodes)
@@ -92,6 +92,7 @@ def recreate_by_priority_rank(graph, df, model):
     X_test = df.drop(['num_of_edges'], axis=1)
     # predict num_edges
     y_pred = model.predict(X_test)
+
     # used when calculating probability ranking
     harmonic_number = sum([
         1 / k for k in range(1, num_of_nodes + 1)
@@ -116,24 +117,19 @@ def recreate_by_priority_rank(graph, df, model):
         ]
         # Choose randomly k (num_edges) nodes to make connections with
         sorted_sim = sorted(similarities, key=lambda x: x[1], reverse=True)
-        # get amount from prediction
-        num_e = len([x for x in sorted_sim if x[1] > 0.65])
-        target_nodes = np.random.choice(ranking, size=num_e,
+        # get edges amount from prediction
+        # edge_thresh = max(y_pred).item() * 0.7
+        # num_e = len([x for x in sorted_sim if x[1] > edge_thresh])
+        target_nodes = np.random.choice(ranking, size=num_edges,
                                         replace=False, p=probability)
         # Add edges to new graph
         for target_node in target_nodes:
             new_graph.add_edge(node1_id, target_node)
 
-    #import matplotlib.pyplot as plt
-    #plt.figure(1)
-    #plt.plot(y_pred)
-    #plt.figure(2)
-    #plt.plot(df[['num_of_edges']])
-    #plt.show()
+    # import matplotlib.pyplot as plt
+    # plt.figure(1)
+    # plt.plot(y_pred)
+    # plt.figure(2)
+    # plt.plot(df[['num_of_edges']])
+    # plt.show()
     return new_graph
-
-
-
-# czy graf ma być skierowany?
-# maksymalna liczba krawędzi = 1, można wagi przypisywać
-# ile połączeń ma wychodzić z wierzchołka?

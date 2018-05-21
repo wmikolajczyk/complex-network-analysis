@@ -13,7 +13,7 @@ def minMax(x):
     return pd.Series(index=['min','max'],data=[x.min(),x.max()])
 
 
-params = {'n': 15, 'm': 10}
+params = {'n': 50, 'm': 10}
 
 graph = generate_graph(nx.barabasi_albert_graph, params)
 attach_graph_attributes(graph)
