@@ -114,5 +114,5 @@ def print_comparison_results(comparison_results):
                 passed_test = comparison_results[measurement] < abs_dist_max_threshold
             else:
                 passed_test = None
-        msg = '{:18} {:46} [passed: {}]'.format(name, result, passed_test)
+        msg = '{:18} {:50} [passed: {}]'.format(name, result, passed_test)
         print(msg)
