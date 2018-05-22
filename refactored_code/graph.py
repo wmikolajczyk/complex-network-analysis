@@ -103,11 +103,7 @@ def print_comparison_results(comparison_results):
     abs_dist_max_threshold = 0.05
 
     for measurement, m_type in MEASUREMENTS.items():
-        if comparison_results[measurement] is not None:
-            result_val = '{:.12f}'.format(comparison_results[measurement])
-        else:
-            result_val = None
-        result = '{}: {}'.format(measurement, result_val)
+        result = '{}: {}'.format(measurement, comparison_results[measurement])
 
         if m_type == 'list':
             name = '(KS test p-value)'
