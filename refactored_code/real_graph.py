@@ -3,6 +3,7 @@ import requests
 import tarfile
 import wget
 import re
+import networkx as nx
 
 from bs4 import BeautifulSoup
 
@@ -39,7 +40,7 @@ def download_dataset(network_name, available_datasets):
         print('Dataset doest not exist')
         return
 
-    max_filesize = 1000000000  # 50MB
+    max_filesize = 1000000000  # 1GB
     if int(requests.head(dataset['url']).headers['content-length']) > max_filesize:
         print('Skipping {} - larger than {}b'.format(network_name, max_filesize))
         return
@@ -79,4 +80,24 @@ def count_attributes(network_filepath):
     return attribute_files_num
 
 
-# TODO: load_graph
+def load_graph(network_filepath):
+    """
+    Files in network dir
+        out. - adjacency matrix
+        ent. - node attributes ordered by node_id
+        README, meta - skip
+    """
+    files = os.listdir(network_filepath)
+    out_files = []
+    for filename in files:
+        if 'out.' in filename:
+            out_files.append(filename)
+
+    if len(out_files) != 1:
+        print('There should be exactly one out. file')
+        return
+
+    adj_file = out_files[0]
+    adj_filepath = os.path.join(network_filepath, adj_file)
+    graph = nx.read_adjlist(adj_filepath, comments='%', nodetype=int)
+    return graph
