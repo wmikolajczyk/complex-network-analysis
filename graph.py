@@ -63,6 +63,9 @@ def get_graph_measurements(graph):
         print('Cannot compute degree centralization - {}'.format(e))
     graph_measurements['density'] = nx.density(graph)
 
+    graph_measurements['degree_assortativity'] = nx.degree_assortativity_coefficient(graph)
+    graph_measurements['transitivity'] = nx.transitivity(graph)
+
     return graph_measurements
 
 
@@ -76,6 +79,8 @@ MEASUREMENTS = OrderedDict([
     ('diameter', 'value'),
     ('degree_centralization', 'value'),
     ('density', 'value'),
+    ('degree_assortativity', 'value'),
+    ('transitivity', 'value'),
 ])
 
 
@@ -91,16 +96,17 @@ def compare_graph_measurements(graph1_measurements, graph2_measurements):
                     graph2_measurements[measurement] is None):
                 val = None
             else:
+                # abs in denominator is required because some measures can have values < 0
                 val = abs(
                     graph1_measurements[measurement] -
-                    graph2_measurements[measurement]) / graph1_measurements[measurement]
+                    graph2_measurements[measurement]) / abs(graph1_measurements[measurement])
         results[measurement] = val
     return results
 
 
 def print_comparison_results(comparison_results):
     ks_test_min_threshold = 0.05
-    abs_dist_max_threshold = 0.05
+    abs_dist_max_threshold = 0.10
 
     for measurement, m_type in MEASUREMENTS.items():
         result = '{}: {}'.format(measurement, comparison_results[measurement])
