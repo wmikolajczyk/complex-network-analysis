@@ -20,7 +20,7 @@ def recreate_graph(graph):
     return new_graph
 
 
-def get_trained_model(df, epochs=128, batch_size=64):
+def get_trained_model(df, epochs=128, batch_size=64, verbose=1):
     # number of attributes without target
     number_of_attrs = len(df.columns) - 1
 
@@ -47,7 +47,7 @@ def get_trained_model(df, epochs=128, batch_size=64):
 
     model.compile(loss='binary_crossentropy', optimizer='sgd')
 
-    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size)
+    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=verbose)
     return model
 
 
