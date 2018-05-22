@@ -99,5 +99,40 @@ def load_graph(network_filepath):
 
     adj_file = out_files[0]
     adj_filepath = os.path.join(network_filepath, adj_file)
-    graph = nx.read_adjlist(adj_filepath, comments='%', nodetype=int)
+    graph = nx.read_adjlist(adj_filepath, comments='%')
+    graph = nx.convert_node_labels_to_integers(graph)
     return graph
+
+
+def attach_real_attributes(graph, network_filepath):
+    """
+    Read features fron ent. files
+    """
+    files = os.listdir(network_filepath)
+    ent_files = [filename for filename in files if 'ent.' in filename]
+
+    ent_gens = []
+    for ent_file in ent_files:
+        ent_filepath = os.path.join(network_filepath, ent_file)
+        if file_lines(ent_filepath) == graph.number_of_nodes():
+            ent_gens.append(file_gen(ent_filepath))
+
+    for node_id in graph.nodes:
+        node_attributes = {
+            filename.split('.')[-1]: next(gen)
+            for (filename, gen) in zip(ent_files, ent_gens)
+        }
+        graph.node[node_id].update(node_attributes)
+
+
+def file_lines(filename):
+    with open(filename) as f:
+        for i, l in enumerate(f):
+            pass
+    return i + 1
+
+
+def file_gen(filename):
+    with open(filename) as f:
+        for line in f:
+            yield line.rstrip()
