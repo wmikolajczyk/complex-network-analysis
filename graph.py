@@ -53,21 +53,29 @@ def get_graph_measurements(graph):
         graph_measurements['diameter'] = None
         print('Cannot compute diameter - {}'.format(e))
 
-    max_degree = max([v for k, v in graph.degree])
-    degree_deltas = [max_degree - v for k, v in graph.degree]
-
     try:
-        graph_measurements['degree_centralization'] = sum(degree_deltas) / max(degree_deltas)
+        graph_measurements['degree_centralization'] = freeman_centralization(graph_measurements['degree_centrality'])
+        graph_measurements['closeness_centralization'] = freeman_centralization(graph_measurements['closeness_centrality'])
+        graph_measurements['betweenness_centralization'] = freeman_centralization(graph_measurements['betweenness_centrality'])
+        graph_measurements['pagerank_centralization'] = freeman_centralization(graph_measurements['pagerank'])
+        graph_measurements['clustering_centralization'] = freeman_centralization(nx.clustering(graph).values())
     except ZeroDivisionError as e:
         graph_measurements['degree_centralization'] = None
         print('Cannot compute degree centralization - {}'.format(e))
-    graph_measurements['density'] = nx.density(graph)
 
+    graph_measurements['density'] = nx.density(graph)
     graph_measurements['degree_assortativity'] = nx.degree_assortativity_coefficient(graph)
     graph_measurements['reciprocity'] = nx.reciprocity(graph)
     graph_measurements['transitivity'] = nx.transitivity(graph)
 
     return graph_measurements
+
+
+def freeman_centralization(values):
+    max_val = max(values)
+    deltas = [max_val - val for val in values]
+
+    return sum(deltas) / max(deltas)
 
 
 MEASUREMENTS = OrderedDict([
@@ -78,7 +86,13 @@ MEASUREMENTS = OrderedDict([
 
     ('average_shortest_path_length', 'value'),
     ('diameter', 'value'),
+
     ('degree_centralization', 'value'),
+    ('closeness_centralization', 'value'),
+    ('betweenness_centralization', 'value'),
+    ('pagerank_centralization', 'value'),
+    ('clustering_centralization', 'value'),
+
     ('density', 'value'),
     ('degree_assortativity', 'value'),
     ('reciprocity', 'value'),
