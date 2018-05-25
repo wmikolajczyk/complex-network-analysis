@@ -64,6 +64,7 @@ def get_graph_measurements(graph):
     graph_measurements['density'] = nx.density(graph)
 
     graph_measurements['degree_assortativity'] = nx.degree_assortativity_coefficient(graph)
+    graph_measurements['reciprocity'] = nx.reciprocity(graph)
     graph_measurements['transitivity'] = nx.transitivity(graph)
 
     return graph_measurements
@@ -80,6 +81,7 @@ MEASUREMENTS = OrderedDict([
     ('degree_centralization', 'value'),
     ('density', 'value'),
     ('degree_assortativity', 'value'),
+    ('reciprocity', 'value'),
     ('transitivity', 'value'),
 ])
 
