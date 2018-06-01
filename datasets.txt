@@ -1,4 +1,4 @@
-# Sociopatterns
+# -- Sociopatterns - http://www.sociopatterns.org/
 1. Primary school temporal network data (2)
     features: class, gender
     link: http://www.sociopatterns.org/datasets/primary-school-temporal-network-data/
@@ -19,7 +19,7 @@
     features: role
     link: http://www.sociopatterns.org/datasets/hospital-ward-dynamic-contact-network/
 
-# Konect
+# -- Konect - http://konect.uni-koblenz.de/
 6. discogs_lgenre (1 + 1) (two types of nodes)
     features: node1 - genre, node2 - label
 
@@ -52,3 +52,25 @@
 14. petster-hamster (11)
     # petster-friendships-hamster is subset of petster-hamster
     features: name joined species coloring gender birthday age hometown favorite_toy favorite_activity favorite_food
+
+# -- Snap Stanford - http://snap.stanford.edu/
+15. email-Eu-core network (1)
+    features: department
+    link: http://snap.stanford.edu/data/email-Eu-core.html
+
+16. soc-Pokec - Pokec social network (multiple)
+    # massive network - over 1 000 000 nodes, and features file ~1.8GB -> take part from it
+    link: http://snap.stanford.edu/data/soc-pokec.html
+# -- Icon colorado
+17. Faculty Hiring Networks (5)
+    features: pi, USN2010, NRC95, Region, institution (rank, gender on edge, u-(rank, gender)->v )
+    link: http://tuvalu.santafe.edu/~aaronc/facultyhiring/
+
+18. Harry Potter character relations (3)
+    # edge list as adjacency matrix
+    features: schoolyear, gender, house
+    link: http://www.stats.ox.ac.uk/~snijders/siena/HarryPotterData.html
+
+# http://moreno.ss.uci.edu/data.html#ffe
+
+# networkrepository - http://networkrepository.com/networks.php
