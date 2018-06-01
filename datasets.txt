@@ -1,0 +1,54 @@
+# Sociopatterns
+1. Primary school temporal network data (2)
+    features: class, gender
+    link: http://www.sociopatterns.org/datasets/primary-school-temporal-network-data/
+
+2. Contacts in a workplace (1)
+    features: department
+    link: http://www.sociopatterns.org/datasets/contacts-in-a-workplace/
+
+3. Kenyan households contact network (3)
+    features: household, age, gender
+    link: http://www.sociopatterns.org/datasets/kenyan-households-contact-network/
+
+4. High school dynamic contact networks (2)
+    features: class? (PC, MP*2...), gender
+    link: http://www.sociopatterns.org/datasets/high-school-dynamic-contact-networks/
+
+5. Hospital ward dynamic contact network (1)
+    features: role
+    link: http://www.sociopatterns.org/datasets/hospital-ward-dynamic-contact-network/
+
+# Konect
+6. discogs_lgenre (1 + 1) (two types of nodes)
+    features: node1 - genre, node2 - label
+
+    discogs_lstyle (1 + 1)
+        features: node1 - style, node2 - label
+
+    can be merged by labels
+
+7. moreno_crime
+    features: role (victim, suspect... n1 -(role)-> n2), sex
+
+8. unicodelang (1 + 1) (two types of nodes)
+    features: country_code, lang_code (country_code1->lang_code1, country_code1->lang_code2 with weight)
+
+9. moreno_blogs (1)
+    features: orientation
+
+10. moreno_seventh (1)
+    features: gender
+
+11. moreno_sheep (1)
+    features: age (missing values)
+
+# big datasets in csv (space separaterd)
+# petster-carnivore (cat + dog)
+12. petster-friendships-cat-uniq (5)
+    features: name, home (city), weight, sex, race
+13. petster-friendships-dog (5)
+    features: name, home (city), weight, sex, race
+14. petster-hamster (11)
+    # petster-friendships-hamster is subset of petster-hamster
+    features: name joined species coloring gender birthday age hometown favorite_toy favorite_activity favorite_food
