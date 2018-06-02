@@ -99,6 +99,7 @@ def load_graph(network_filepath):
 
     adj_file = out_files[0]
     adj_filepath = os.path.join(network_filepath, adj_file)
+    # it should be read_edgelist - but still working
     graph = nx.read_adjlist(adj_filepath, comments='%')
     graph = nx.convert_node_labels_to_integers(graph)
     return graph
