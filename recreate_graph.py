@@ -69,7 +69,12 @@ def graph_to_dataframe(graph):
             row.update(attrs1)
             row.update(attrs2)
             # TODO: weight
-            row['num_of_edges'] = graph.number_of_edges(node1_id, node2_id)
+            edge_data = graph.get_edge_data(node1_id, node2_id)
+            if edge_data:
+                weight = edge_data['weight']
+            else:
+                weight = 0
+            row['num_of_edges'] = weight
             rows.append(row)
 
     df = pd.DataFrame(rows)
