@@ -9,13 +9,9 @@ def load_primary_school():
     prepared_primary_school = 'prepared_datasets/primary_school'
     prepared_edge_list = os.path.join(prepared_primary_school, 'edge_list.csv')
     prepared_node_attributes = os.path.join(prepared_primary_school, 'node_attributes.csv')
-    prepared_meta = os.path.join(prepared_primary_school, 'meta.json')
-
-    with open(prepared_meta, 'r') as src:
-        meta = json.load(src)
 
     #       LOAD EDGES
-    graph = nx.read_edgelist(prepared_edge_list, nodetype=int)
+    graph = nx.read_edgelist(prepared_edge_list, create_using=nx.DiGraph(), nodetype=int)
     # print(graph.edges(data=True))
     #       ADD ATTRIBUTES
     """
@@ -39,3 +35,4 @@ def load_primary_school():
 
 g = load_primary_school()
 print('done')
+import pdb; pdb.set_trace()
