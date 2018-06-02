@@ -32,22 +32,30 @@ def load_dataset_to_graph(dataset_dir):
         graph.node[node_id].update(node_attributes)
     return graph
 
+
+def recreate_real_graph(prepared_dataset_dir):
+    graph = load_dataset_to_graph(prepared_dataset_dir)
+    # attach graph attrs
+    attach_graph_attributes(graph)
+    # graph to df
+    df = graph_to_dataframe(graph)
+    # train model
+    model = get_trained_model(df, epochs=4)
+    # generate graph
+    new_graph = recreate_by_priority_rank(graph, df, model)
+    # compare
+    graph_measurements = get_graph_measurements(graph)
+    new_graph_measurements = get_graph_measurements(new_graph)
+    comparison = compare_graph_measurements(graph_measurements, new_graph_measurements)
+    print_comparison_results(comparison)
+
+    import pdb; pdb.set_trace()
+
+
 primary_school_path = os.path.join(prepared_datsets_path, 'primary_school')
-graph = load_dataset_to_graph(primary_school_path)
-# attach graph attrs
-attach_graph_attributes(graph)
-# graph to df
-df = graph_to_dataframe(graph)
-# train model
-model = get_trained_model(df, epochs=4)
-# SET WEIGHTS WHEN CREATING 
-# generate graph
-new_graph = recreate_by_priority_rank(graph, df, model)
-# compare
-graph_measurements = get_graph_measurements(graph)
-new_graph_measurements = get_graph_measurements(new_graph)
-comparison = compare_graph_measurements(graph_measurements, new_graph_measurements)
-print_comparison_results(comparison)
+workplace_path = os.path.join(prepared_datsets_path, 'workplace')
+
+# recreate_real_graph(primary_school_path)
+recreate_real_graph(workplace_path)
 
 print('done')
-import pdb; pdb.set_trace()
