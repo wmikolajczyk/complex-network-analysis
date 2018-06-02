@@ -51,7 +51,7 @@ def get_trained_model(df, epochs=128, batch_size=64, verbose=1):
     return model
 
 
-def get_prefix_attributes(prefix, node):
+def set_prefix_attributes(prefix, node):
     attributes_dict = {
         prefix + key: value
         for key, value in node.items()
@@ -62,12 +62,13 @@ def get_prefix_attributes(prefix, node):
 def graph_to_dataframe(graph):
     rows = []
     for node1_id in graph.nodes:
-        attrs1 = get_prefix_attributes('node1_', graph.node[node1_id])
+        attrs1 = set_prefix_attributes('node1_', graph.node[node1_id])
         for node2_id in graph.nodes:
-            attrs2 = get_prefix_attributes('node2_', graph.node[node2_id])
+            attrs2 = set_prefix_attributes('node2_', graph.node[node2_id])
             row = OrderedDict()
             row.update(attrs1)
             row.update(attrs2)
+            # TODO: weight
             row['num_of_edges'] = graph.number_of_edges(node1_id, node2_id)
             rows.append(row)
 
