@@ -1,5 +1,4 @@
 import os
-import json
 
 import networkx as nx
 import pandas as pd
@@ -12,14 +11,8 @@ def load_primary_school():
 
     #       LOAD EDGES
     graph = nx.read_edgelist(prepared_edge_list, create_using=nx.DiGraph(), nodetype=int)
-    # print(graph.edges(data=True))
-    #       ADD ATTRIBUTES
-    """
-    iteruj po wierzcholkach
-    znajdz wiersz w pliku z atrybutami
-        przeczytaj atrybuty
-        dodaj atrybuty
-    """
+
+    #       LOAD ATTRIBUTES
     attributes_data = pd.read_csv(prepared_node_attributes, delimiter='\t', header=None)
     attributes_data.columns = ['node_id', 'class', 'gender']
     attributes_columns = list(attributes_data.columns)
