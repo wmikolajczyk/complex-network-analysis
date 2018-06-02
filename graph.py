@@ -58,7 +58,7 @@ def get_graph_measurements(graph):
         graph_measurements['closeness_centralization'] = freeman_centralization(graph_measurements['closeness_centrality'])
         graph_measurements['betweenness_centralization'] = freeman_centralization(graph_measurements['betweenness_centrality'])
         graph_measurements['pagerank_centralization'] = freeman_centralization(graph_measurements['pagerank'])
-        graph_measurements['clustering_centralization'] = freeman_centralization(nx.clustering(graph).values())
+        #graph_measurements['clustering_centralization'] = freeman_centralization(nx.clustering(graph).values())
     except ZeroDivisionError as e:
         graph_measurements['degree_centralization'] = None
         print('Cannot compute degree centralization - {}'.format(e))
@@ -91,7 +91,8 @@ MEASUREMENTS = OrderedDict([
     ('closeness_centralization', 'value'),
     ('betweenness_centralization', 'value'),
     ('pagerank_centralization', 'value'),
-    ('clustering_centralization', 'value'),
+    # Not implemented for directed
+    #('clustering_centralization', 'value'),
 
     ('density', 'value'),
     ('degree_assortativity', 'value'),
