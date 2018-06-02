@@ -109,7 +109,7 @@ def recreate_by_priority_rank(graph, df, model):
     num_edges = round(graph.number_of_edges() / graph.number_of_nodes())
     num_of_nodes = graph.number_of_nodes()
 
-    new_graph = nx.empty_graph(n=num_of_nodes)
+    new_graph = nx.DiGraph()
     # drop target column
     X_test = df.drop(['num_of_edges'], axis=1)
     # predict num_edges
@@ -145,6 +145,7 @@ def recreate_by_priority_rank(graph, df, model):
         target_nodes = np.random.choice(ranking, size=num_edges,
                                         replace=False, p=probability)
         # Add edges to new graph
+        # creating verticles while adding edges
         for target_node in target_nodes:
             new_graph.add_edge(node1_id, target_node)
 
