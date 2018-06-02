@@ -61,6 +61,7 @@
 16. soc-Pokec - Pokec social network (multiple)
     # massive network - over 1 000 000 nodes, and features file ~1.8GB -> take part from it
     link: http://snap.stanford.edu/data/soc-pokec.html
+    
 # -- Icon colorado
 17. Faculty Hiring Networks (5)
     features: pi, USN2010, NRC95, Region, institution (rank, gender on edge, u-(rank, gender)->v )
