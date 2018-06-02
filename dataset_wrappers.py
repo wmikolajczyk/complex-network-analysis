@@ -12,6 +12,7 @@ import networkx as nx
 
 delimiter = '\t'
 
+# EVERY GRAPH TREAT AS WEIGHTED AND DIRECTED
 def prepare_primary_school(dataset_dir):
     """
     Primary school temporal network data (2 features)
@@ -22,9 +23,6 @@ def prepare_primary_school(dataset_dir):
     Edge = contact between people
 
     Timestamps of contact -> to remove, but count how many connections and set it as edge weights
-
-    Weighted
-    Undirected
     """
     edge_list = os.path.join(dataset_dir, 'primaryschool.csv')
     node_attributes = os.path.join(dataset_dir, 'metadata_primaryschool.txt')
@@ -56,18 +54,12 @@ def prepare_primary_school(dataset_dir):
             weighted_graph[u][v]['weight'] += 1
         else:
             weighted_graph.add_edge(u, v, weight=1)
-    nx.write_edgelist(weighted_graph, prepared_edge_list, delimiter=delimiter)
+    # GET DIRECTED GRAPH (edge a->b {weight: 2} = a->b {weight: 2} and b->a {weight: 2})
+    directed_weighted_graph = weighted_graph.to_directed()
+    nx.write_edgelist(directed_weighted_graph, prepared_edge_list, delimiter=delimiter)
 
     #           PROCESS ATTRIBUTES
     shutil.copy(node_attributes, prepared_node_attributes)
-
-    #           PROCESS META
-    meta = {
-        'weighted': True,
-        'directed': False,
-    }
-    with open(prepared_meta, 'w') as out:
-        json.dump(meta, out)
 
 
 prepare_primary_school('raw_datasets/primary_school')
