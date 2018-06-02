@@ -119,12 +119,12 @@ def recreate_by_priority_rank(graph, df, model):
     harmonic_number = sum([
         1 / k for k in range(1, num_of_nodes + 1)
     ])
-    for node1_id in graph.nodes:
+    for node1_index, node1_id in enumerate(graph.nodes):
         # get dict of node rankings
         #   [(node0_id, num_edges), (node1_id, num_edges)]
         similarities = []
-        for node2_id in graph.nodes:
-            node_index = node1_id * num_of_nodes + node2_id
+        for node2_index, node2_id in enumerate(graph.nodes):
+            node_index = node1_index * num_of_nodes + node2_index
             similarities.append((node2_id, y_pred.item(node_index)))
         # Node ranking sorted in descending similarity order
         ranking = [
