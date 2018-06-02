@@ -3,6 +3,9 @@ import os
 import networkx as nx
 import pandas as pd
 
+from graph import attach_graph_attributes, get_graph_measurements, compare_graph_measurements, print_comparison_results
+from recreate_graph import graph_to_dataframe, get_trained_model, recreate_by_priority_rank
+
 delimiter = '\t'
 
 prepared_datsets_path = 'prepared_datasets'
@@ -30,12 +33,22 @@ def load_dataset_to_graph(dataset_dir):
     return graph
 
 primary_school_path = os.path.join(prepared_datsets_path, 'primary_school')
-g = load_dataset_to_graph(primary_school_path)
+graph = load_dataset_to_graph(primary_school_path)
+# attach graph attrs
+attach_graph_attributes(graph)
+# graph to df
+df = graph_to_dataframe(graph)
+# train model
+model = get_trained_model(df, epochs=4)
+# SET WEIGHTS WHEN CREATING 
+# Make Digraph
+# generate graph
+new_graph = recreate_by_priority_rank(graph, df, model)
+# compare
+graph_measurements = get_graph_measurements(graph)
+new_graph_measurements = get_graph_measurements(new_graph)
+comparison = compare_graph_measurements(graph_measurements, new_graph_measurements)
+print_comparison_results(comparison)
+
 print('done')
 import pdb; pdb.set_trace()
-
-# Graph to dataframe
-
-# get trained model
-
-# recreate by priority rank
