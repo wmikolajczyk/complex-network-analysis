@@ -106,4 +106,5 @@ ENV/
 # Datasets directory
 datasets
 networks
-downloads
+raw_datasets
+prepared_datasets
