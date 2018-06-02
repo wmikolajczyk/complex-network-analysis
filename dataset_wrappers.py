@@ -4,6 +4,7 @@ import shutil
 import json
 
 import networkx as nx
+import pandas as pd
 # podaj sciezke do folderu z datasetem
 # przetworz
 # podaj sciezke docelowa - zwroc folder - edges - attributes
@@ -12,8 +13,11 @@ import networkx as nx
 
 delimiter = '\t'
 
+raw_datasets_path = 'raw_datasets'
+prepared_datsets_path = 'prepared_datasets'
+
 # EVERY GRAPH TREAT AS WEIGHTED AND DIRECTED
-def prepare_primary_school(dataset_dir):
+def prepare_primary_school(dataset_name):
     """
     Primary school temporal network data (2 features)
         features: class, gender
@@ -24,13 +28,13 @@ def prepare_primary_school(dataset_dir):
 
     Timestamps of contact -> to remove, but count how many connections and set it as edge weights
     """
-    edge_list = os.path.join(dataset_dir, 'primaryschool.csv')
-    node_attributes = os.path.join(dataset_dir, 'metadata_primaryschool.txt')
+    raw_primary_school = os.path.join(raw_datasets_path, dataset_name)
+    edge_list = os.path.join(raw_primary_school, 'primaryschool.csv')
+    node_attributes = os.path.join(raw_primary_school, 'metadata_primaryschool.txt')
 
-    prepared_primary_school = 'prepared_datasets/primary_school'
+    prepared_primary_school = os.path.join(prepared_datsets_path, dataset_name)
     prepared_edge_list = os.path.join(prepared_primary_school, 'edge_list.csv')
     prepared_node_attributes = os.path.join(prepared_primary_school, 'node_attributes.csv')
-    prepared_meta = os.path.join(prepared_primary_school, 'meta.json')
 
     if not os.path.exists(prepared_primary_school):
         os.mkdir(prepared_primary_school)
@@ -60,7 +64,11 @@ def prepare_primary_school(dataset_dir):
 
     #           PROCESS ATTRIBUTES
     shutil.copy(node_attributes, prepared_node_attributes)
+    attrs_df = pd.read_csv(node_attributes, delimiter=delimiter, 
+        names=['node_id', 'class', 'gender'])
+    #import pdb; pdb.set_trace()
+    attrs_df.to_csv(prepared_node_attributes, sep=delimiter, index=False)
 
 
-prepare_primary_school('raw_datasets/primary_school')
+prepare_primary_school('primary_school')
 print('done')
