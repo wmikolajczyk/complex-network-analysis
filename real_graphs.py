@@ -41,7 +41,6 @@ df = graph_to_dataframe(graph)
 # train model
 model = get_trained_model(df, epochs=4)
 # SET WEIGHTS WHEN CREATING 
-# Make Digraph
 # generate graph
 new_graph = recreate_by_priority_rank(graph, df, model)
 # compare
