@@ -1,17 +1,17 @@
 # -- Sociopatterns - http://www.sociopatterns.org/
-1. Primary school temporal network data (2)
+1. Primary school temporal network data (2) [X]
     features: class, gender
     link: http://www.sociopatterns.org/datasets/primary-school-temporal-network-data/
 
-2. Contacts in a workplace (1)
+2. Contacts in a workplace (1) [X]
     features: department
     link: http://www.sociopatterns.org/datasets/contacts-in-a-workplace/
 
-3. Kenyan households contact network (3)
+3. Kenyan households contact network (3) [-]
     features: household, age, gender
     link: http://www.sociopatterns.org/datasets/kenyan-households-contact-network/
 
-4. High school dynamic contact networks (2)
+4. High school dynamic contact networks (2) [X]
     features: class? (PC, MP*2...), gender
     link: http://www.sociopatterns.org/datasets/high-school-dynamic-contact-networks/
 
@@ -61,7 +61,7 @@
 16. soc-Pokec - Pokec social network (multiple)
     # massive network - over 1 000 000 nodes, and features file ~1.8GB -> take part from it
     link: http://snap.stanford.edu/data/soc-pokec.html
-    
+
 # -- Icon colorado
 17. Faculty Hiring Networks (5)
     features: pi, USN2010, NRC95, Region, institution (rank, gender on edge, u-(rank, gender)->v )
