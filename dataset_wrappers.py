@@ -239,9 +239,12 @@ def prepare_moreno_sheep(dataset_name, edge_list_filename, node_attributes_filen
 
     if not os.path.exists(prepared_dataset):
         os.mkdir(prepared_dataset)
+
+    # PROCESS EDGES
     # Graph id Directed and have not Multi edges
     #   so there is no need to sum weights
-    directed_weighted_graph = nx.read_edgelist(edge_list, create_using=nx.DiGraph(), comments='%', nodetype=int, data=(('weight', float),))
+    directed_weighted_graph = nx.read_edgelist(edge_list, create_using=nx.DiGraph(), comments='%', 
+        nodetype=int, data=(('weight', float),))
     nx.write_edgelist(directed_weighted_graph, prepared_edge_list, delimiter=delimiter)
 
     # PROCESS ATTRIBUTES
@@ -261,6 +264,39 @@ def prepare_moreno_sheep(dataset_name, edge_list_filename, node_attributes_filen
                 except IndexError:
                     writer.writerow((node_id, ''))
 
+
+def prepare_moreno_seventh(dataset_name, edge_list_filename, node_attributes_filename):
+    raw_dataset_dir = os.path.join(raw_datasets_path, dataset_name)
+    edge_list = os.path.join(raw_dataset_dir, edge_list_filename)
+    node_attributes = os.path.join(raw_dataset_dir, node_attributes_filename)
+
+    prepared_dataset = os.path.join(prepared_datasets_path, dataset_name)
+    prepared_edge_list = os.path.join(prepared_dataset, 'edge_list.csv')
+    prepared_node_attributes = os.path.join(prepared_dataset, 'node_attributes.csv')
+
+    if not os.path.exists(prepared_dataset):
+        os.mkdir(prepared_dataset)
+
+    # PROCESS EDGES
+    directed_weighted_graph = nx.read_edgelist(edge_list, create_using=nx.DiGraph(), comments='%',
+        nodetype=int, data=(('weight', float),))
+    nx.write_edgelist(directed_weighted_graph, prepared_edge_list, delimiter=delimiter)
+
+    # PROCESS ATTRIBUTES
+    sorted_nodes = sorted(directed_weighted_graph.nodes)
+
+    if not file_lines(node_attributes) == len(sorted_nodes):
+        raise ValueError('Number of nodes and number of lines in attributes file are not the same')
+
+    with open(node_attributes, 'r') as source:
+        reader = csv.reader(source)
+        with open(prepared_node_attributes, 'w') as result:
+            writer = csv.writer(result, delimiter=delimiter)
+            writer.writerow(('node_id', 'gender'))
+            for node_id, attrs in zip(sorted_nodes, reader):
+                writer.writerow((node_id, attrs[0]))
+
+
 # prepare_primary_school('primary_school')
 # prepare_workplace('workplace')
 # TODO: refactor - load primary school like highschool - maybe load workplace too
@@ -269,6 +305,7 @@ def prepare_moreno_sheep(dataset_name, edge_list_filename, node_attributes_filen
 # prepare_hospital('hospital')
 # prepare_moreno_blogs('moreno_blogs', 'out.moreno_blogs_blogs', 'ent.moreno_blogs_blogs.blog.orientation')
 # prepare_moreno_sheep('moreno_sheep', 'out.moreno_sheep_sheep', 'ent.moreno_sheep_sheep.sheep.age')
+prepare_moreno_seventh('moreno_seventh', 'out.moreno_seventh_seventh', 'ent.moreno_seventh_seventh.student.gender')
 print('done')
 
 
