@@ -34,8 +34,9 @@
 8. unicodelang (1 + 1) (two types of nodes)
     features: country_code, lang_code (country_code1->lang_code1, country_code1->lang_code2 with weight)
 
-9. moreno_blogs (1)
+9. moreno_blogs (1) [X]
     features: orientation
+    link: http://konect.uni-koblenz.de/downloads/tsv/moreno_blogs.tar.bz2
 
 10. moreno_seventh (1)
     features: gender

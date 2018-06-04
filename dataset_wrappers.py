@@ -1,5 +1,6 @@
 import os
 import csv
+import shutil
 
 import networkx as nx
 import pandas as pd
@@ -186,12 +187,61 @@ def prepare_hospital(dataset_name):
         for key, val in attrs_dict.items():
             writer.writerow((key, val))
 
+
+def prepare_moreno_blogs_dataset(dataset_name, edge_list_filename, node_attributes_filename):
+    # zakladamy ze sciagniety wczesniej do raw datasets
+    raw_dataset_dir = os.path.join(raw_datasets_path, dataset_name)
+    edge_list = os.path.join(raw_dataset_dir, edge_list_filename)
+    node_attributes = os.path.join(raw_dataset_dir, node_attributes_filename)
+
+    prepared_dataset = os.path.join(prepared_datasets_path, dataset_name)
+    prepared_edge_list = os.path.join(prepared_dataset, 'edge_list.csv')
+    prepared_node_attributes = os.path.join(prepared_dataset, 'node_attributes.csv')
+    
+    if not os.path.exists(prepared_dataset):
+        os.mkdir(prepared_dataset)
+
+    # PROCESS EDGES
+    shutil.copy(edge_list, prepared_edge_list)
+    # There is nice edge list - need to be converted to weights only
+
+    weighted_graph = nx.Graph()
+    multi_graph = nx.read_edgelist(prepared_edge_list, create_using=nx.MultiGraph(), comments='%')
+
+    for u, v, data in multi_graph.edges(data=True):
+        if weighted_graph.has_edge(u, v):
+            weighted_graph[u][v]['weight'] += 1
+        else:
+            weighted_graph.add_edge(u, v, weight=1)
+    # GET DIRECTED GRAPH (edge a->b {weight: 2} = a->b {weight: 2} and b->a {weight: 2})
+    # graph is already directed
+    nx.write_edgelist(weighted_graph, prepared_edge_list, delimiter=delimiter)
+
+    # PROCESS ATTRIBUTES
+    sorted_nodes = sorted([int(x) for x in weighted_graph.nodes])
+    # sprawdz czy liczba wierszy jest taka jak liczba wierzcholkow
+    from konect_graphs import file_lines
+    if not file_lines(node_attributes) == len(sorted_nodes):
+        raise ValueError('Number of nodes and number of lines in attributes file are not the same')
+    # idz po kolei po id wierzcholkow i im tworz cechy
+    with open(node_attributes, 'r') as source:
+        # actually it's only one value so delimiter has no effect
+        reader = csv.reader(source)
+        with open(prepared_node_attributes, 'w') as result:
+            writer = csv.writer(result, delimiter=delimiter)
+            writer.writerow(('node_id', 'orientation'))
+            # attrs - list, but here it's only one element
+            for node_id, attrs in zip(sorted_nodes, reader):
+                writer.writerow((node_id, attrs[0]))
+
+
 # prepare_primary_school('primary_school')
 # prepare_workplace('workplace')
 # TODO: refactor - load primary school like highschool - maybe load workplace too
 # prepare_highschool('highschool_2011', 'thiers_2011.csv', 'metadata_2011.txt')
 # prepare_highschool('highschool_2012', 'thiers_2012.csv', 'metadata_2012.txt')
-prepare_hospital('hospital')
+# prepare_hospital('hospital')
+prepare_moreno_blogs_dataset('moreno_blogs', 'out.moreno_blogs_blogs', 'ent.moreno_blogs_blogs.blog.orientation')
 print('done')
 
 

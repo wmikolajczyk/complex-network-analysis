@@ -34,16 +34,22 @@ def load_dataset_to_graph(dataset_dir):
 
 
 def recreate_real_graph(prepared_dataset_dir):
+    print('Loading graph...')
     graph = load_dataset_to_graph(prepared_dataset_dir)
     # attach graph attrs
+    print('Attaching graph attributes...')
     attach_graph_attributes(graph)
     # graph to df
+    print('Converting to dataframe...')
     df = graph_to_dataframe(graph)
     # train model
+    print('Training model...')
     model = get_trained_model(df, epochs=4)
     # generate graph
+    print('Recreating graph...')
     new_graph = recreate_by_priority_rank(graph, df, model)
     # compare
+    print('Comparing graphs...')
     graph_measurements = get_graph_measurements(graph)
     new_graph_measurements = get_graph_measurements(new_graph)
     comparison = compare_graph_measurements(graph_measurements, new_graph_measurements)
@@ -57,7 +63,8 @@ workplace_path = os.path.join(prepared_datasets_path, 'workplace')
 highschool_2011_path = os.path.join(prepared_datasets_path, 'highschool_2011')
 highschool_2012_path = os.path.join(prepared_datasets_path, 'highschool_2012')
 hospital_path = os.path.join(prepared_datasets_path, 'hospital')
+moreno_blogs_path = os.path.join(prepared_datasets_path, 'moreno_blogs')
 
-recreate_real_graph(hospital_path)
+recreate_real_graph(moreno_blogs_path)
 
 print('done')
