@@ -14,6 +14,7 @@
     link: http://www.sociopatterns.org/datasets/kenyan-households-contact-network/
 
 4. High school dynamic contact networks (2) [X]
+    (two datasets - 2011 and 2012)
     category: HumanSocial
     features: class? (PC, MP*2...), gender
     link: http://www.sociopatterns.org/datasets/high-school-dynamic-contact-networks/
@@ -70,16 +71,16 @@
     features: department
     link: http://snap.stanford.edu/data/email-Eu-core.html
 
-16. soc-Pokec - Pokec social network (multiple)
+16. soc-Pokec - Pokec social network (multiple) (too big) [-]
     # massive network - over 1 000 000 nodes, and features file ~1.8GB -> take part from it
     link: http://snap.stanford.edu/data/soc-pokec.html
 
 # -- Icon colorado
-17. Faculty Hiring Networks (5)
+17. Faculty Hiring Networks (5) (bipartite) [-]
     features: pi, USN2010, NRC95, Region, institution (rank, gender on edge, u-(rank, gender)->v )
     link: http://tuvalu.santafe.edu/~aaronc/facultyhiring/
 
-18. Harry Potter character relations (3)
+18. Harry Potter character relations (3) 
     # edge list as adjacency matrix
     features: schoolyear, gender, house
     link: http://www.stats.ox.ac.uk/~snijders/siena/HarryPotterData.html
