@@ -297,6 +297,48 @@ def prepare_moreno_seventh(dataset_name, edge_list_filename, node_attributes_fil
                 writer.writerow((node_id, attrs[0]))
 
 
+def prepare_petster_hamster(dataset_name, edge_list_filename, node_attributes_filename):
+    raw_dataset_dir = os.path.join(raw_datasets_path, dataset_name)
+    edge_list = os.path.join(raw_dataset_dir, edge_list_filename)
+    node_attributes = os.path.join(raw_dataset_dir, node_attributes_filename)
+
+    prepared_dataset = os.path.join(prepared_datasets_path, dataset_name)
+    prepared_edge_list = os.path.join(prepared_dataset, 'edge_list.csv')
+    prepared_node_attributes = os.path.join(prepared_dataset, 'node_attributes.csv')
+
+    if not os.path.exists(prepared_dataset):
+        os.mkdir(prepared_dataset)
+
+    # PROCESS EDGES
+    graph = nx.read_edgelist(edge_list, create_using=nx.Graph(), comments='%',
+        nodetype=int)
+    # set weights
+    nx.set_edge_attributes(graph, name='weight', values=1)
+    # to directed
+    directed_weighted_graph = graph.to_directed()
+    nx.write_edgelist(directed_weighted_graph, prepared_edge_list, delimiter=delimiter)
+
+    # PROCESS ATTRIBUTES
+    sorted_nodes = sorted(directed_weighted_graph)
+    # columns
+    # ent dat.name dat.joined dat.species dat.coloring dat.gender dat.birthday dat.age dat.hometown dat.favorite_toy dat.favorite_activity dat.favorite_food
+    # columns to stay
+    # [0] ent - node_id, [3] species, [4] coloring, [5] gender, [7]age?, [8]hometown?
+    with open(node_attributes, 'r', encoding='windows-1250') as source:
+        reader = csv.reader(source, delimiter=' ')
+        # skip first 3 rows
+        for _ in range(3):
+            next(reader)
+        with open(prepared_node_attributes, 'w') as result:
+            writer = csv.writer(result, delimiter=delimiter)
+            writer.writerow(('node_id', 'species', 'coloring', 'gender'))
+            for node_id, attrs in zip(sorted_nodes, reader):
+                # handle lack of attributes
+                while node_id != int(attrs[0]):
+                    writer.writerow((node_id, '', '', ''))
+                    node_id += 1
+                writer.writerow((node_id, attrs[3], attrs[4], attrs[5]))
+
 # prepare_primary_school('primary_school')
 # prepare_workplace('workplace')
 # TODO: refactor - load primary school like highschool - maybe load workplace too
@@ -305,7 +347,8 @@ def prepare_moreno_seventh(dataset_name, edge_list_filename, node_attributes_fil
 # prepare_hospital('hospital')
 # prepare_moreno_blogs('moreno_blogs', 'out.moreno_blogs_blogs', 'ent.moreno_blogs_blogs.blog.orientation')
 # prepare_moreno_sheep('moreno_sheep', 'out.moreno_sheep_sheep', 'ent.moreno_sheep_sheep.sheep.age')
-prepare_moreno_seventh('moreno_seventh', 'out.moreno_seventh_seventh', 'ent.moreno_seventh_seventh.student.gender')
+# prepare_moreno_seventh('moreno_seventh', 'out.moreno_seventh_seventh', 'ent.moreno_seventh_seventh.student.gender')
+prepare_petster_hamster('petster-hamster', 'out.petster-hamster', 'ent.petster-hamster')
 print('done')
 
 

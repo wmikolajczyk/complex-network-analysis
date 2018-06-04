@@ -67,7 +67,8 @@ hospital_path = os.path.join(prepared_datasets_path, 'hospital')
 moreno_blogs_path = os.path.join(prepared_datasets_path, 'moreno_blogs')
 moreno_sheep_path = os.path.join(prepared_datasets_path, 'moreno_sheep')
 moreno_seventh_path = os.path.join(prepared_datasets_path, 'moreno_seventh')
+petster_hamster_path = os.path.join(prepared_datasets_path, 'petster-hamster')
 
-recreate_real_graph(moreno_seventh_path)
+recreate_real_graph(petster_hamster_path)
 
 print('done')

@@ -1,26 +1,30 @@
 # -- Sociopatterns - http://www.sociopatterns.org/
 1. Primary school temporal network data (2) [X]
+    category: HumanSocial
     features: class, gender
     link: http://www.sociopatterns.org/datasets/primary-school-temporal-network-data/
 
 2. Contacts in a workplace (1) [X]
+    category: HumanSocial
     features: department
     link: http://www.sociopatterns.org/datasets/contacts-in-a-workplace/
 
-3. Kenyan households contact network (3) [-]
+3. Kenyan households contact network (3) (village_letter - number combines real id) [-]
     features: household, age, gender
     link: http://www.sociopatterns.org/datasets/kenyan-households-contact-network/
 
 4. High school dynamic contact networks (2) [X]
+    category: HumanSocial
     features: class? (PC, MP*2...), gender
     link: http://www.sociopatterns.org/datasets/high-school-dynamic-contact-networks/
 
 5. Hospital ward dynamic contact network (1) [X]
+    category: HumanSocial
     features: role
     link: http://www.sociopatterns.org/datasets/hospital-ward-dynamic-contact-network/
 
 # -- Konect - http://konect.uni-koblenz.de/
-6. discogs_lgenre (1 + 1) (two types of nodes)
+6. discogs_lgenre (1 + 1) (bipartite) [-]
     features: node1 - genre, node2 - label
 
     discogs_lstyle (1 + 1)
@@ -28,10 +32,12 @@
 
     can be merged by labels
 
-7. moreno_crime
+7. moreno_crime (bipartite) [-] 
+    category: Interaction
     features: role (victim, suspect... n1 -(role)-> n2), sex
+    link: http://konect.uni-koblenz.de/downloads/tsv/moreno_crime.tar.bz2
 
-8. unicodelang (1 + 1) (two types of nodes)
+8. unicodelang (1 + 1) (bipartite) [-]
     features: country_code, lang_code (country_code1->lang_code1, country_code1->lang_code2 with weight)
 
 9. moreno_blogs (1) [X]
@@ -39,9 +45,10 @@
     features: orientation
     link: http://konect.uni-koblenz.de/downloads/tsv/moreno_blogs.tar.bz2
 
-10. moreno_seventh (1)
+10. moreno_seventh (1) [X]
     category: HumanSocial
     features: gender
+    link: http://konect.uni-koblenz.de/downloads/tsv/moreno_seventh.tar.bz2
 
 11. moreno_sheep (1) [X]
     category: Animal
@@ -54,7 +61,7 @@
     features: name, home (city), weight, sex, race
 13. petster-friendships-dog (5)
     features: name, home (city), weight, sex, race
-14. petster-hamster (11)
+14. petster-hamster (11) [ ]
     # petster-friendships-hamster is subset of petster-hamster
     features: name joined species coloring gender birthday age hometown favorite_toy favorite_activity favorite_food
 
