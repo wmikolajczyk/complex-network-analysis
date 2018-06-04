@@ -198,29 +198,20 @@ def prepare_moreno_blogs(dataset_name, edge_list_filename, node_attributes_filen
     prepared_dataset = os.path.join(prepared_datasets_path, dataset_name)
     prepared_edge_list = os.path.join(prepared_dataset, 'edge_list.csv')
     prepared_node_attributes = os.path.join(prepared_dataset, 'node_attributes.csv')
-    
+
     if not os.path.exists(prepared_dataset):
         os.mkdir(prepared_dataset)
 
     # PROCESS EDGES
-    shutil.copy(edge_list, prepared_edge_list)
     # There is nice edge list - need to be converted to weights only
-
-    # TODO: FIX -> DiGraph not MultiGraph
-    weighted_graph = nx.Graph()
-    multi_graph = nx.read_edgelist(prepared_edge_list, create_using=nx.MultiGraph(), comments='%')
-
-    for u, v, data in multi_graph.edges(data=True):
-        if weighted_graph.has_edge(u, v):
-            weighted_graph[u][v]['weight'] += 1
-        else:
-            weighted_graph.add_edge(u, v, weight=1)
-    # GET DIRECTED GRAPH (edge a->b {weight: 2} = a->b {weight: 2} and b->a {weight: 2})
+    directed_graph = nx.read_edgelist(edge_list, create_using=nx.DiGraph(), comments='%', nodetype=int)
     # graph is already directed
-    nx.write_edgelist(weighted_graph, prepared_edge_list, delimiter=delimiter)
+    # set all weights equal to 1
+    nx.set_edge_attributes(directed_graph, name='weight', values=1)
+    nx.write_edgelist(directed_graph, prepared_edge_list, delimiter=delimiter)
 
     # PROCESS ATTRIBUTES
-    sorted_nodes = sorted([int(x) for x in weighted_graph.nodes])
+    sorted_nodes = sorted([int(x) for x in directed_graph.nodes])
     # sprawdz czy liczba wierszy jest taka jak liczba wierzcholkow
 
     if not file_lines(node_attributes) == len(sorted_nodes):
@@ -277,7 +268,7 @@ def prepare_moreno_sheep(dataset_name, edge_list_filename, node_attributes_filen
 # prepare_highschool('highschool_2012', 'thiers_2012.csv', 'metadata_2012.txt')
 # prepare_hospital('hospital')
 # prepare_moreno_blogs('moreno_blogs', 'out.moreno_blogs_blogs', 'ent.moreno_blogs_blogs.blog.orientation')
-prepare_moreno_sheep('moreno_sheep', 'out.moreno_sheep_sheep', 'ent.moreno_sheep_sheep.sheep.age')
+# prepare_moreno_sheep('moreno_sheep', 'out.moreno_sheep_sheep', 'ent.moreno_sheep_sheep.sheep.age')
 print('done')
 
 
