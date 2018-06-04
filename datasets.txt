@@ -15,7 +15,7 @@
     features: class? (PC, MP*2...), gender
     link: http://www.sociopatterns.org/datasets/high-school-dynamic-contact-networks/
 
-5. Hospital ward dynamic contact network (1)
+5. Hospital ward dynamic contact network (1) [X]
     features: role
     link: http://www.sociopatterns.org/datasets/hospital-ward-dynamic-contact-network/
 
@@ -75,3 +75,5 @@
 # http://moreno.ss.uci.edu/data.html#ffe
 
 # networkrepository - http://networkrepository.com/networks.php
+
+# http://www.sociopatterns.org/datasets/high-school-contact-and-friendship-networks/

@@ -8,7 +8,7 @@ from recreate_graph import graph_to_dataframe, get_trained_model, recreate_by_pr
 
 delimiter = '\t'
 
-prepared_datsets_path = 'prepared_datasets'
+prepared_datasets_path = 'prepared_datasets'
 
 
 def load_dataset_to_graph(dataset_dir):
@@ -52,10 +52,12 @@ def recreate_real_graph(prepared_dataset_dir):
     import pdb; pdb.set_trace()
 
 
-primary_school_path = os.path.join(prepared_datsets_path, 'primary_school')
-workplace_path = os.path.join(prepared_datsets_path, 'workplace')
+primary_school_path = os.path.join(prepared_datasets_path, 'primary_school')
+workplace_path = os.path.join(prepared_datasets_path, 'workplace')
+highschool_2011_path = os.path.join(prepared_datasets_path, 'highschool_2011')
+highschool_2012_path = os.path.join(prepared_datasets_path, 'highschool_2012')
+hospital_path = os.path.join(prepared_datasets_path, 'hospital')
 
-# recreate_real_graph(primary_school_path)
-recreate_real_graph(workplace_path)
+recreate_real_graph(hospital_path)
 
 print('done')
