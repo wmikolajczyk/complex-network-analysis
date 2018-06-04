@@ -16,6 +16,7 @@ def load_dataset_to_graph(dataset_dir):
     prepared_node_attributes = os.path.join(dataset_dir, 'node_attributes.csv')
 
     #       LOAD EDGES
+    # Weights are auto loaded {'weight': 1.0}
     graph = nx.read_edgelist(prepared_edge_list, create_using=nx.DiGraph(), nodetype=int)
 
     #       LOAD ATTRIBUTES
@@ -64,7 +65,8 @@ highschool_2011_path = os.path.join(prepared_datasets_path, 'highschool_2011')
 highschool_2012_path = os.path.join(prepared_datasets_path, 'highschool_2012')
 hospital_path = os.path.join(prepared_datasets_path, 'hospital')
 moreno_blogs_path = os.path.join(prepared_datasets_path, 'moreno_blogs')
+moreno_sheep_path = os.path.join(prepared_datasets_path, 'moreno_sheep')
 
-recreate_real_graph(moreno_blogs_path)
+recreate_real_graph(moreno_sheep_path)
 
 print('done')

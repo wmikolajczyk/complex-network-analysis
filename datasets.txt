@@ -35,14 +35,18 @@
     features: country_code, lang_code (country_code1->lang_code1, country_code1->lang_code2 with weight)
 
 9. moreno_blogs (1) [X]
+    category: Hyperlink
     features: orientation
     link: http://konect.uni-koblenz.de/downloads/tsv/moreno_blogs.tar.bz2
 
 10. moreno_seventh (1)
+    category: HumanSocial
     features: gender
 
-11. moreno_sheep (1)
+11. moreno_sheep (1) [X]
+    category: Animal
     features: age (missing values)
+    link: http://konect.uni-koblenz.de/downloads/tsv/moreno_sheep.tar.bz2
 
 # big datasets in csv (space separaterd)
 # petster-carnivore (cat + dog)

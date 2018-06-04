@@ -5,6 +5,7 @@ import shutil
 import networkx as nx
 import pandas as pd
 
+from konect_graphs import file_lines
 
 delimiter = '\t'
 
@@ -188,7 +189,7 @@ def prepare_hospital(dataset_name):
             writer.writerow((key, val))
 
 
-def prepare_moreno_blogs_dataset(dataset_name, edge_list_filename, node_attributes_filename):
+def prepare_moreno_blogs(dataset_name, edge_list_filename, node_attributes_filename):
     # zakladamy ze sciagniety wczesniej do raw datasets
     raw_dataset_dir = os.path.join(raw_datasets_path, dataset_name)
     edge_list = os.path.join(raw_dataset_dir, edge_list_filename)
@@ -205,6 +206,7 @@ def prepare_moreno_blogs_dataset(dataset_name, edge_list_filename, node_attribut
     shutil.copy(edge_list, prepared_edge_list)
     # There is nice edge list - need to be converted to weights only
 
+    # TODO: FIX -> DiGraph not MultiGraph
     weighted_graph = nx.Graph()
     multi_graph = nx.read_edgelist(prepared_edge_list, create_using=nx.MultiGraph(), comments='%')
 
@@ -220,7 +222,7 @@ def prepare_moreno_blogs_dataset(dataset_name, edge_list_filename, node_attribut
     # PROCESS ATTRIBUTES
     sorted_nodes = sorted([int(x) for x in weighted_graph.nodes])
     # sprawdz czy liczba wierszy jest taka jak liczba wierzcholkow
-    from konect_graphs import file_lines
+
     if not file_lines(node_attributes) == len(sorted_nodes):
         raise ValueError('Number of nodes and number of lines in attributes file are not the same')
     # idz po kolei po id wierzcholkow i im tworz cechy
@@ -235,13 +237,47 @@ def prepare_moreno_blogs_dataset(dataset_name, edge_list_filename, node_attribut
                 writer.writerow((node_id, attrs[0]))
 
 
+def prepare_moreno_sheep(dataset_name, edge_list_filename, node_attributes_filename):
+    raw_dataset_dir = os.path.join(raw_datasets_path, dataset_name)
+    edge_list = os.path.join(raw_dataset_dir, edge_list_filename)
+    node_attributes = os.path.join(raw_dataset_dir, node_attributes_filename)
+
+    prepared_dataset = os.path.join(prepared_datasets_path, dataset_name)
+    prepared_edge_list = os.path.join(prepared_dataset, 'edge_list.csv')
+    prepared_node_attributes = os.path.join(prepared_dataset, 'node_attributes.csv')
+
+    if not os.path.exists(prepared_dataset):
+        os.mkdir(prepared_dataset)
+    # Graph id Directed and have not Multi edges
+    #   so there is no need to sum weights
+    directed_weighted_graph = nx.read_edgelist(edge_list, create_using=nx.DiGraph(), comments='%', nodetype=int, data=(('weight', float),))
+    nx.write_edgelist(directed_weighted_graph, prepared_edge_list, delimiter=delimiter)
+
+    # PROCESS ATTRIBUTES
+    sorted_nodes = sorted(directed_weighted_graph.nodes)
+
+    if not file_lines(node_attributes) == len(sorted_nodes):
+        raise ValueError('Number of nodes and number of lines in attributes file are not the same')
+
+    with open(node_attributes, 'r') as source:
+        reader = csv.reader(source)
+        with open(prepared_node_attributes, 'w') as result:
+            writer = csv.writer(result, delimiter=delimiter)
+            writer.writerow(('node_id', 'age'))
+            for node_id, attrs in zip(sorted_nodes, reader):
+                try:
+                    writer.writerow((node_id, attrs[0]))
+                except IndexError:
+                    writer.writerow((node_id, ''))
+
 # prepare_primary_school('primary_school')
 # prepare_workplace('workplace')
 # TODO: refactor - load primary school like highschool - maybe load workplace too
 # prepare_highschool('highschool_2011', 'thiers_2011.csv', 'metadata_2011.txt')
 # prepare_highschool('highschool_2012', 'thiers_2012.csv', 'metadata_2012.txt')
 # prepare_hospital('hospital')
-prepare_moreno_blogs_dataset('moreno_blogs', 'out.moreno_blogs_blogs', 'ent.moreno_blogs_blogs.blog.orientation')
+# prepare_moreno_blogs('moreno_blogs', 'out.moreno_blogs_blogs', 'ent.moreno_blogs_blogs.blog.orientation')
+prepare_moreno_sheep('moreno_sheep', 'out.moreno_sheep_sheep', 'ent.moreno_sheep_sheep.sheep.age')
 print('done')
 
 
