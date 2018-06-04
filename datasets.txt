@@ -57,11 +57,11 @@
 
 # big datasets in csv (space separaterd)
 # petster-carnivore (cat + dog)
-12. petster-friendships-cat-uniq (5)
+12. petster-friendships-cat-uniq (5) (too big) [-]
     features: name, home (city), weight, sex, race
-13. petster-friendships-dog (5)
+13. petster-friendships-dog (5) (too big) [-]
     features: name, home (city), weight, sex, race
-14. petster-hamster (11) [ ]
+14. petster-hamster (11) [X]
     # petster-friendships-hamster is subset of petster-hamster
     features: name joined species coloring gender birthday age hometown favorite_toy favorite_activity favorite_food
 
