@@ -68,7 +68,7 @@ def graph_to_dataframe(graph):
             row = OrderedDict()
             row.update(attrs1)
             row.update(attrs2)
-            # TODO: weight
+
             edge_data = graph.get_edge_data(node1_id, node2_id)
             if edge_data:
                 weight = edge_data['weight']
