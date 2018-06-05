@@ -49,6 +49,8 @@
 Total: 9 (10)
 
 # eventually can be used
+# Kenyan households
+# petsters
 # http://www.sociopatterns.org/datasets/high-school-contact-and-friendship-networks/
 
 
