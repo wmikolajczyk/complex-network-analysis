@@ -49,7 +49,7 @@ def set_prefix_attributes(prefix, node):
     return attributes_dict
 
 
-def graph_to_dataframe(graph):
+def graph_to_training_dataframe(graph):
     rows = []
     for node1_id in graph.nodes:
         attrs1 = set_prefix_attributes('node1_', graph.node[node1_id])
@@ -67,6 +67,18 @@ def graph_to_dataframe(graph):
             row['num_of_edges'] = weight
             rows.append(row)
     df = pd.DataFrame(rows)
+    return df
+
+
+def graph_to_dataframe(graph):
+    nodes_with_attrs = [
+        {
+            'node_id': node_id,
+            **attrs_dict
+        }
+        for node_id, attrs_dict in graph.nodes(data=True)
+    ]
+    df = pd.DataFrame(nodes_with_attrs)
     return df
 
 
