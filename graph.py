@@ -4,6 +4,29 @@ from collections import OrderedDict
 from scipy import stats
 
 
+MEASUREMENTS = OrderedDict([
+    ('degree_centrality', 'list'),
+    ('closeness_centrality', 'list'),
+    ('betweenness_centrality', 'list'),
+    ('pagerank', 'list'),
+
+    ('average_shortest_path_length', 'value'),
+    ('diameter', 'value'),
+
+    ('degree_centralization', 'value'),
+    ('closeness_centralization', 'value'),
+    ('betweenness_centralization', 'value'),
+    ('pagerank_centralization', 'value'),
+    # Not implemented for directed
+    #('clustering_centralization', 'value'),
+
+    ('density', 'value'),
+    ('degree_assortativity', 'value'),
+    ('reciprocity', 'value'),
+    ('transitivity', 'value'),
+])
+
+
 def generate_graph(graph_func, params):
     # set seed
     seed = 93
@@ -34,6 +57,12 @@ def get_graph_measurements(graph):
     """
     Returns graph measurements dict
     """
+    def freeman_centralization(values):
+        max_val = max(values)
+        deltas = [max_val - val for val in values]
+
+        return sum(deltas) / max(deltas)
+
     graph_measurements = OrderedDict()
 
     # measurement is a list of node values
@@ -71,34 +100,14 @@ def get_graph_measurements(graph):
     return graph_measurements
 
 
-def freeman_centralization(values):
-    max_val = max(values)
-    deltas = [max_val - val for val in values]
-
-    return sum(deltas) / max(deltas)
-
-
-MEASUREMENTS = OrderedDict([
-    ('degree_centrality', 'list'),
-    ('closeness_centrality', 'list'),
-    ('betweenness_centrality', 'list'),
-    ('pagerank', 'list'),
-
-    ('average_shortest_path_length', 'value'),
-    ('diameter', 'value'),
-
-    ('degree_centralization', 'value'),
-    ('closeness_centralization', 'value'),
-    ('betweenness_centralization', 'value'),
-    ('pagerank_centralization', 'value'),
-    # Not implemented for directed
-    #('clustering_centralization', 'value'),
-
-    ('density', 'value'),
-    ('degree_assortativity', 'value'),
-    ('reciprocity', 'value'),
-    ('transitivity', 'value'),
-])
+def print_graph_measurements(graph_measurements):
+    msg = 'Graph measurements:\n'
+    for measurement, m_type in MEASUREMENTS.items():
+        # skip list of values
+        if m_type == 'list':
+            continue
+        msg += '  {}: {}\n'.format(measurement, graph_measurements[measurement])
+    print(msg)
 
 
 def compare_graph_measurements(graph1_measurements, graph2_measurements):
