@@ -33,31 +33,3 @@ def load_dataset_to_graph(dataset_dir):
     # Weights are auto loaded {'weight': 1.0}
     graph = nx.read_edgelist(prepared_edge_list, create_using=nx.DiGraph(), nodetype=int)
     return graph
-
-
-def recreate_real_graph(prepared_dataset_dir):
-    print('Loading graph...')
-    graph = load_dataset_to_graph(prepared_dataset_dir)
-    # for x in range(301,1005):
-    #     graph.remove_node(x)
-    # attach graph attrs
-    print('Attaching graph attributes...')
-    attach_graph_attributes(graph)
-    # attach real attrs
-    print('Attaching real attributes...')
-    attach_real_attributes(graph, prepared_dataset_dir)
-    # graph to df
-    print('Converting to dataframe...')
-    df = graph_to_dataframe(graph)
-    # train model
-    print('Training model...')
-    model = get_trained_model(df, epochs=4)
-    # generate graph
-    print('Recreating graph...')
-    new_graph = recreate_by_priority_rank(graph, df, model)
-    # compare
-    print('Comparing graphs...')
-    graph_measurements = get_graph_measurements(graph)
-    new_graph_measurements = get_graph_measurements(new_graph)
-    comparison = compare_graph_measurements(graph_measurements, new_graph_measurements)
-    print_comparison_results(comparison)
