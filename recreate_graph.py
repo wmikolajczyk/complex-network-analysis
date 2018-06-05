@@ -79,8 +79,6 @@ def graph_to_dataframe(graph):
 
     df = pd.DataFrame(rows)
     # TODO: think about that
-    # fill NaN with man
-    df = df.fillna(df.mean())
     # all attributes are strings (object type)
     # try to convert them to numeric (ignore errors - string which cannot be converted)
     df = df.apply(pd.to_numeric, errors='ignore')

@@ -263,6 +263,10 @@ def prepare_moreno_sheep(dataset_name, edge_list_filename, node_attributes_filen
                     writer.writerow((node_id, attrs[0]))
                 except IndexError:
                     writer.writerow((node_id, ''))
+    # fill NaN in age
+    attrs_df = pd.read_csv(prepared_node_attributes, delimiter=delimiter)
+    attrs_df[['age']] = attrs_df[['age']].apply(lambda x: round(x.fillna(x.mean())))
+    attrs_df.to_csv(prepared_node_attributes, sep=delimiter, index=False)
 
 
 def prepare_moreno_seventh(dataset_name, edge_list_filename, node_attributes_filename):
@@ -378,10 +382,10 @@ def prepare_email_eu(dataset_name, edge_list_filename, node_attributes_filename)
 # prepare_highschool('highschool_2012', 'thiers_2012.csv', 'metadata_2012.txt')
 # prepare_hospital('hospital')
 # prepare_moreno_blogs('moreno_blogs', 'out.moreno_blogs_blogs', 'ent.moreno_blogs_blogs.blog.orientation')
-# prepare_moreno_sheep('moreno_sheep', 'out.moreno_sheep_sheep', 'ent.moreno_sheep_sheep.sheep.age')
+prepare_moreno_sheep('moreno_sheep', 'out.moreno_sheep_sheep', 'ent.moreno_sheep_sheep.sheep.age')
 # prepare_moreno_seventh('moreno_seventh', 'out.moreno_seventh_seventh', 'ent.moreno_seventh_seventh.student.gender')
 # prepare_petster_hamster('petster-hamster', 'out.petster-hamster', 'ent.petster-hamster')
-prepare_email_eu('email-Eu', 'email-Eu-core.txt', 'email-Eu-core-department-labels.txt')
+# prepare_email_eu('email-Eu', 'email-Eu-core.txt', 'email-Eu-core-department-labels.txt')
 print('done')
 
 
