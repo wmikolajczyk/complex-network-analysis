@@ -11,14 +11,8 @@ delimiter = '\t'
 prepared_datasets_path = 'prepared_datasets'
 
 
-def load_dataset_to_graph(dataset_dir):
-    prepared_edge_list = os.path.join(dataset_dir, 'edge_list.csv')
+def attach_real_attributes(graph, dataset_dir):
     prepared_node_attributes = os.path.join(dataset_dir, 'node_attributes.csv')
-
-    #       LOAD EDGES
-    # Weights are auto loaded {'weight': 1.0}
-    graph = nx.read_edgelist(prepared_edge_list, create_using=nx.DiGraph(), nodetype=int)
-
     #       LOAD ATTRIBUTES
     attributes_data = pd.read_csv(prepared_node_attributes, delimiter=delimiter)
     # list of node attributes without node_id
@@ -33,6 +27,13 @@ def load_dataset_to_graph(dataset_dir):
         graph.node[node_id].update(node_attributes)
     return graph
 
+def load_dataset_to_graph(dataset_dir):
+    prepared_edge_list = os.path.join(dataset_dir, 'edge_list.csv')
+    #       LOAD EDGES
+    # Weights are auto loaded {'weight': 1.0}
+    graph = nx.read_edgelist(prepared_edge_list, create_using=nx.DiGraph(), nodetype=int)
+    return graph
+
 
 def recreate_real_graph(prepared_dataset_dir):
     print('Loading graph...')
@@ -42,6 +43,9 @@ def recreate_real_graph(prepared_dataset_dir):
     # attach graph attrs
     print('Attaching graph attributes...')
     attach_graph_attributes(graph)
+    # attach real attrs
+    print('Attaching real attributes...')
+    attach_real_attributes(graph, prepared_dataset_dir)
     # graph to df
     print('Converting to dataframe...')
     df = graph_to_dataframe(graph)
@@ -74,6 +78,6 @@ petster_hamster_path = os.path.join(prepared_datasets_path, 'petster-hamster')
 # warning: big -> remove some nodes
 email_eu_path = os.path.join(prepared_datasets_path, 'email-Eu')
 
-recreate_real_graph(email_eu_path)
+recreate_real_graph(workplace_path)
 
 print('done')
