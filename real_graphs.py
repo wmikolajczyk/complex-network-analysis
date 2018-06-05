@@ -3,12 +3,18 @@ import os
 import networkx as nx
 import pandas as pd
 
-from graph import attach_graph_attributes, get_graph_measurements, compare_graph_measurements, print_comparison_results
-from recreate_graph import graph_to_dataframe, get_trained_model, recreate_by_priority_rank
 
 delimiter = '\t'
 
 prepared_datasets_path = 'prepared_datasets'
+
+
+def load_dataset_to_graph(dataset_dir):
+    prepared_edge_list = os.path.join(dataset_dir, 'edge_list.csv')
+    #       LOAD EDGES
+    # Weights are auto loaded {'weight': 1.0}
+    graph = nx.read_edgelist(prepared_edge_list, create_using=nx.DiGraph(), nodetype=int)
+    return graph
 
 
 def attach_real_attributes(graph, dataset_dir):
@@ -25,11 +31,4 @@ def attach_real_attributes(graph, dataset_dir):
             for colname in attributes_columns
         }
         graph.node[node_id].update(node_attributes)
-    return graph
-
-def load_dataset_to_graph(dataset_dir):
-    prepared_edge_list = os.path.join(dataset_dir, 'edge_list.csv')
-    #       LOAD EDGES
-    # Weights are auto loaded {'weight': 1.0}
-    graph = nx.read_edgelist(prepared_edge_list, create_using=nx.DiGraph(), nodetype=int)
     return graph
