@@ -67,7 +67,7 @@
     features: name joined species coloring gender birthday age hometown favorite_toy favorite_activity favorite_food
 
 # -- Snap Stanford - http://snap.stanford.edu/
-15. email-Eu-core network (1)
+15. email-Eu-core network (1) [X]
     features: department
     link: http://snap.stanford.edu/data/email-Eu-core.html
 
@@ -80,7 +80,7 @@
     features: pi, USN2010, NRC95, Region, institution (rank, gender on edge, u-(rank, gender)->v )
     link: http://tuvalu.santafe.edu/~aaronc/facultyhiring/
 
-18. Harry Potter character relations (3) 
+18. Harry Potter character relations (3) [ ]
     # edge list as adjacency matrix
     features: schoolyear, gender, house
     link: http://www.stats.ox.ac.uk/~snijders/siena/HarryPotterData.html

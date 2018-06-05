@@ -37,6 +37,8 @@ def load_dataset_to_graph(dataset_dir):
 def recreate_real_graph(prepared_dataset_dir):
     print('Loading graph...')
     graph = load_dataset_to_graph(prepared_dataset_dir)
+    # for x in range(301,1005):
+    #     graph.remove_node(x)
     # attach graph attrs
     print('Attaching graph attributes...')
     attach_graph_attributes(graph)
@@ -67,8 +69,11 @@ hospital_path = os.path.join(prepared_datasets_path, 'hospital')
 moreno_blogs_path = os.path.join(prepared_datasets_path, 'moreno_blogs')
 moreno_sheep_path = os.path.join(prepared_datasets_path, 'moreno_sheep')
 moreno_seventh_path = os.path.join(prepared_datasets_path, 'moreno_seventh')
+# warning: big -> remove some nodes
 petster_hamster_path = os.path.join(prepared_datasets_path, 'petster-hamster')
+# warning: big -> remove some nodes
+email_eu_path = os.path.join(prepared_datasets_path, 'email-Eu')
 
-recreate_real_graph(petster_hamster_path)
+recreate_real_graph(email_eu_path)
 
 print('done')
