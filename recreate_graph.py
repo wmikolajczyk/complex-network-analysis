@@ -76,7 +76,6 @@ def graph_to_dataframe(graph):
                 weight = 0
             row['num_of_edges'] = weight
             rows.append(row)
-
     df = pd.DataFrame(rows)
     # TODO: think about that
     # all attributes are strings (object type)
@@ -86,8 +85,11 @@ def graph_to_dataframe(graph):
     coltypes_dict = dict(df.dtypes)
     str_columns = [key for key in coltypes_dict
                    if coltypes_dict[key] == 'object']
+    # cast coltype to category
     for column in str_columns:
         df[column] = df[column].astype('category')
+    # drop column if number of unique values = number of nodes
+    #   because it means this column is like string id for node
     for column in df.select_dtypes(['category']).columns:
         if df[column].nunique() == graph.number_of_nodes():
             df.drop(column, axis=1, inplace=True)
