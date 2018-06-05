@@ -61,23 +61,3 @@ def recreate_real_graph(prepared_dataset_dir):
     new_graph_measurements = get_graph_measurements(new_graph)
     comparison = compare_graph_measurements(graph_measurements, new_graph_measurements)
     print_comparison_results(comparison)
-
-    import pdb; pdb.set_trace()
-
-
-primary_school_path = os.path.join(prepared_datasets_path, 'primary_school')
-workplace_path = os.path.join(prepared_datasets_path, 'workplace')
-highschool_2011_path = os.path.join(prepared_datasets_path, 'highschool_2011')
-highschool_2012_path = os.path.join(prepared_datasets_path, 'highschool_2012')
-hospital_path = os.path.join(prepared_datasets_path, 'hospital')
-moreno_blogs_path = os.path.join(prepared_datasets_path, 'moreno_blogs')
-moreno_sheep_path = os.path.join(prepared_datasets_path, 'moreno_sheep')
-moreno_seventh_path = os.path.join(prepared_datasets_path, 'moreno_seventh')
-# warning: big -> remove some nodes
-petster_hamster_path = os.path.join(prepared_datasets_path, 'petster-hamster')
-# warning: big -> remove some nodes
-email_eu_path = os.path.join(prepared_datasets_path, 'email-Eu')
-
-recreate_real_graph(workplace_path)
-
-print('done')
