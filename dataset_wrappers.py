@@ -339,6 +339,38 @@ def prepare_petster_hamster(dataset_name, edge_list_filename, node_attributes_fi
                     node_id += 1
                 writer.writerow((node_id, attrs[3], attrs[4], attrs[5]))
 
+
+def prepare_email_eu(dataset_name, edge_list_filename, node_attributes_filename):
+    raw_dataset_dir = os.path.join(raw_datasets_path, dataset_name)
+    edge_list = os.path.join(raw_dataset_dir, edge_list_filename)
+    node_attributes = os.path.join(raw_dataset_dir, node_attributes_filename)
+
+    prepared_dataset = os.path.join(prepared_datasets_path, dataset_name)
+    prepared_edge_list = os.path.join(prepared_dataset, 'edge_list.csv')
+    prepared_node_attributes = os.path.join(prepared_dataset, 'node_attributes.csv')
+
+    if not os.path.exists(prepared_dataset):
+        os.mkdir(prepared_dataset)
+
+    # PROCESS EDGES
+    directed_graph = nx.read_edgelist(edge_list, create_using=nx.DiGraph(), nodetype=int)
+    # graph is already directed
+    # set all weights equal to 1
+    nx.set_edge_attributes(directed_graph, name='weight', values=1)
+    nx.write_edgelist(directed_graph, prepared_edge_list, delimiter=delimiter)
+
+    # PROCESS ATTRIBUTES
+    sorted_nodes = sorted(directed_graph.nodes)
+
+    if file_lines(node_attributes) != len(sorted_nodes):
+        raise ValueError('Number of nodes and number of lines in attributes file are not the same')
+    # replace department numbers with letters -> to prevent casting to numeric 
+    #   while loading into dataframe
+    attrs_df = pd.read_csv(node_attributes, delimiter=' ', names=['node_id', 'department'])
+    attrs_df = pd.get_dummies(attrs_df, columns=['department'], prefix='department')
+    attrs_df.to_csv(prepared_node_attributes, sep=delimiter, index=False)
+
+
 # prepare_primary_school('primary_school')
 # prepare_workplace('workplace')
 # TODO: refactor - load primary school like highschool - maybe load workplace too
@@ -348,7 +380,8 @@ def prepare_petster_hamster(dataset_name, edge_list_filename, node_attributes_fi
 # prepare_moreno_blogs('moreno_blogs', 'out.moreno_blogs_blogs', 'ent.moreno_blogs_blogs.blog.orientation')
 # prepare_moreno_sheep('moreno_sheep', 'out.moreno_sheep_sheep', 'ent.moreno_sheep_sheep.sheep.age')
 # prepare_moreno_seventh('moreno_seventh', 'out.moreno_seventh_seventh', 'ent.moreno_seventh_seventh.student.gender')
-prepare_petster_hamster('petster-hamster', 'out.petster-hamster', 'ent.petster-hamster')
+# prepare_petster_hamster('petster-hamster', 'out.petster-hamster', 'ent.petster-hamster')
+prepare_email_eu('email-Eu', 'email-Eu-core.txt', 'email-Eu-core-department-labels.txt')
 print('done')
 
 
