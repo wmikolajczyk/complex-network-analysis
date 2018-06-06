@@ -147,10 +147,6 @@ def recreate_by_priority_rank(graph, df, model):
             for index, _ in enumerate(ranking, start=1)
         ]
         # Choose randomly k (num_edges) nodes to make connections with
-        sorted_sim = sorted(similarities, key=lambda x: x[1], reverse=True)
-        # get edges amount from prediction
-        # edge_thresh = max(y_pred).item() * 0.7
-        # num_e = len([x for x in sorted_sim if x[1] > edge_thresh])
         target_nodes = np.random.choice(ranking, size=num_edges,
                                         replace=False, p=probability)
         # Add edges to new graph
