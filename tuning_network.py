@@ -8,7 +8,7 @@ from real_graphs import load_dataset_to_graph, attach_real_attributes
 from recreate_graph import graph_to_training_dataframe, preprocess_dataframe,\
     get_trained_model, recreate_by_priority_rank
 
-dataset_name = 'moreno_seventh'
+dataset_name = 'petster-hamster'
 
 delimiter = '\t'
 prepared_datasets_path = 'prepared_datasets'
@@ -22,8 +22,6 @@ graph = load_dataset_to_graph(dataset_path)
 
 # PREPARE CSV FILE WITH DATAFRAME
 #if not os.path.exists(df_path):
-attach_graph_attributes(graph)
-attach_real_attributes(graph, dataset_path)
 # if there is too much nodes - remove
 max_nodes = 300
 overlimit_nodes = graph.number_of_nodes() - max_nodes
@@ -32,6 +30,10 @@ if overlimit_nodes > 0:
     random.seed(93)
     nodes_to_remove = random.sample(graph.nodes(), overlimit_nodes)
     graph.remove_nodes_from(nodes_to_remove)
+    
+attach_graph_attributes(graph)
+attach_real_attributes(graph, dataset_path)
+
 df = graph_to_training_dataframe(graph)
 df = preprocess_dataframe(df, graph.number_of_nodes())
 df.to_csv(df_path, sep=delimiter, index=False)
