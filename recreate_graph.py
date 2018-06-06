@@ -30,16 +30,12 @@ def get_trained_model(df, epochs=128, batch_size=64, verbose=1):
     model.add(Dense(
         units=number_of_attrs,
         input_dim=number_of_attrs,
-        activation='relu'))
+        activation='linear'))
     model.add(Dense(
         units=round(number_of_attrs / 2),
         input_dim=round(number_of_attrs / 2),
         activation='relu'))
-    model.add(Dense(
-        units=round(number_of_attrs / 4),
-        input_dim=round(number_of_attrs / 4),
-        activation='relu'))
-    model.add(Dense(units=1, activation='relu'))
+    model.add(Dense(units=1, activation='sigmoid'))
 
     model.compile(optimizer=SGD(lr=0.01), loss='mean_squared_error', metrics=['accuracy'])
 
