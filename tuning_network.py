@@ -26,9 +26,9 @@ attach_graph_attributes(graph)
 attach_real_attributes(graph, dataset_path)
 # if there is too much nodes - remove
 max_nodes = 300
-overlimit_nodes = graph.number_of_nodes() - 300
+overlimit_nodes = graph.number_of_nodes() - max_nodes
 if overlimit_nodes > 0:
-    print('Cutting nodes up to 300')
+    print('Cutting nodes up to {}'.format(max_nodes))
     random.seed(93)
     nodes_to_remove = random.sample(graph.nodes(), overlimit_nodes)
     graph.remove_nodes_from(nodes_to_remove)
