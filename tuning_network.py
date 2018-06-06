@@ -20,28 +20,28 @@ df_path = os.path.join(prepared_dfs_path, dataset_name + '.csv')
 # GET ORIGINAL GRAPH (FOR COMPARISON)
 graph = load_dataset_to_graph(dataset_path)
 
-# PREPARE CSV FILE WITH DATAFRAME
-#if not os.path.exists(df_path):
 # if there is too much nodes - remove
-max_nodes = 300
+max_nodes = 250
 overlimit_nodes = graph.number_of_nodes() - max_nodes
 if overlimit_nodes > 0:
     print('Cutting nodes up to {}'.format(max_nodes))
     random.seed(93)
     nodes_to_remove = random.sample(graph.nodes(), overlimit_nodes)
     graph.remove_nodes_from(nodes_to_remove)
-    
-attach_graph_attributes(graph)
-attach_real_attributes(graph, dataset_path)
 
-df = graph_to_training_dataframe(graph)
-df = preprocess_dataframe(df, graph.number_of_nodes())
-df.to_csv(df_path, sep=delimiter, index=False)
+# PREPARE CSV FILE WITH DATAFRAME IF NOT EXISTS
+if not os.path.exists(df_path):
+    attach_graph_attributes(graph)
+    attach_real_attributes(graph, dataset_path)
+
+    df = graph_to_training_dataframe(graph)
+    df = preprocess_dataframe(df, graph.number_of_nodes())
+    df.to_csv(df_path, sep=delimiter, index=False)
 
 # LOAD DATAFRAME
 df = pd.read_csv(df_path, delimiter=delimiter)
 print('Training model...')
-model = get_trained_model(df, epochs=4)
+model = get_trained_model(df, epochs=16)
 print('Recreating by priority rank...')
 recreated_graph = recreate_by_priority_rank(graph, df, model)
 print('Getting original graph measurements...')
