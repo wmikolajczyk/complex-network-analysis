@@ -113,6 +113,7 @@ def preprocess_dataframe(df, number_of_nodes):
     df.loc[:, :] = scaled_values
     return df
 
+
 def recreate_by_priority_rank(graph, df, model):
     num_edges = round(graph.number_of_edges() / graph.number_of_nodes())
     num_of_nodes = graph.number_of_nodes()
