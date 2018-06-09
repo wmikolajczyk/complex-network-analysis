@@ -9,7 +9,7 @@ from keras.optimizers import SGD
 from tensorflow import set_random_seed
 
 
-def get_model1(X_train, y_train, number_of_attrs, epochs, batch_size, verbose):
+def get_model(X_train, y_train, number_of_attrs, epochs, batch_size, verbose):
     # set seed for model reproducibility
     np.random.seed(93)
     # tensorflow random seed
@@ -50,11 +50,11 @@ def get_trained_model(df, epochs=128, batch_size=64, verbose=1):
     # tensorflow random seed
     set_random_seed(2)
 
-    model = get_model1(X_train, y_train, number_of_attrs, epochs, batch_size, verbose)
+    model = get_model(X_train, y_train, number_of_attrs, epochs, batch_size, verbose)
     return model
 
 
-def recreate_by_priority_rank(graph, df, model):
+def recreate_by_priority_rank(graph, df, model, show_graphs=False):
     num_edges = round(graph.number_of_edges() / graph.number_of_nodes())
     num_of_nodes = graph.number_of_nodes()
 
@@ -94,10 +94,11 @@ def recreate_by_priority_rank(graph, df, model):
         for target_node in target_nodes:
             new_graph.add_edge(node1_id, target_node)
 
-    # show predictions and real target values
-    plt.figure(1)
-    plt.plot(y_pred)
-    plt.figure(2)
-    plt.plot(df[['num_of_edges']])
-    plt.show()
+    if show_graphs:
+        # show predictions and real target values
+        plt.figure(1)
+        plt.plot(y_pred)
+        plt.figure(2)
+        plt.plot(df[['num_of_edges']])
+        plt.show()
     return new_graph
