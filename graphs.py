@@ -15,7 +15,7 @@ def generate_graph(graph_func, params):
 
 def load_dataset_to_graph(dataset_dir):
     prepared_edge_list = os.path.join(dataset_dir, 'edge_list.csv')
-    #       LOAD EDGES
+    # LOAD EDGES
     # Weights are auto loaded {'weight': 1.0}
     graph = nx.read_edgelist(prepared_edge_list, create_using=nx.DiGraph(), nodetype=int)
     return graph
@@ -41,7 +41,7 @@ def attach_graph_attributes(graph):
 
 def attach_real_attributes(graph, dataset_dir):
     prepared_node_attributes = os.path.join(dataset_dir, 'node_attributes.csv')
-    #       LOAD ATTRIBUTES
+    # LOAD ATTRIBUTES
     attributes_data = pd.read_csv(prepared_node_attributes, delimiter=delimiter)
     # list of node attributes without node_id
     attributes_columns = list(attributes_data.columns)
