@@ -1,3 +1,4 @@
+import random
 import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
@@ -86,6 +87,7 @@ def recreate_by_priority_rank(graph, df, model, show_graphs=False):
             1 / (harmonic_number * index)
             for index, _ in enumerate(ranking, start=1)
         ]
+        # TODO: set seet or not? should it be deterministic?
         # Choose randomly k (num_edges) nodes to make connections with
         target_nodes = np.random.choice(ranking, size=num_edges,
                                         replace=False, p=probability)
@@ -102,3 +104,26 @@ def recreate_by_priority_rank(graph, df, model, show_graphs=False):
         plt.plot(df[['num_of_edges']])
         plt.show()
     return new_graph
+
+
+def recreate_by_priority_rank_no_attributes(graph):
+    num_edges = round(graph.number_of_edges() / graph.number_of_nodes())
+    num_of_nodes = graph.number_of_nodes()
+
+    new_graph = nx.DiGraph()
+
+    harmonic_number = sum([
+        1 / k for k in range(1, num_of_nodes + 1)
+    ])
+    for node1 in graph.nodes:
+        random.seed(93)
+        ranking = shuffle([x for x in graph.nodes])
+        probability = [
+            1 / (harmonic_number * index)
+            for index, _ in enumerate(ranking, start=1)
+        ]
+        # TODO: set seet or not? should it be deterministic?
+        target_nodes = np.random.choice(ranking, size=num_edges,
+                                        replace=False, p=probability)
+        for target_node in target_nodes:
+            new_graph.add_edge(node1, target_node)
