@@ -26,6 +26,9 @@ MEASUREMENTS = OrderedDict([
     ('transitivity', 'value'),
 ])
 
+# weight=None - to explicitly show to treat graph like there is no weights on edges
+#   because there are not - in the recreated graph
+
 
 def get_graph_measurements(graph):
     """
@@ -42,11 +45,11 @@ def get_graph_measurements(graph):
     # measurement is a list of node values
     graph_measurements['degree_centrality'] = list(nx.degree_centrality(graph).values())
     graph_measurements['closeness_centrality'] = list(nx.closeness_centrality(graph).values())
-    graph_measurements['betweenness_centrality'] = list(nx.betweenness_centrality(graph, weight='weight').values())
-    graph_measurements['pagerank'] = list(nx.pagerank(graph, weight='weight').values())
+    graph_measurements['betweenness_centrality'] = list(nx.betweenness_centrality(graph, weight=None).values())
+    graph_measurements['pagerank'] = list(nx.pagerank(graph, weight=None).values())
     # measurement is a number
     try:
-        graph_measurements['average_shortest_path_length'] = nx.average_shortest_path_length(graph, weight='weight')
+        graph_measurements['average_shortest_path_length'] = nx.average_shortest_path_length(graph, weight=None)
     except nx.NetworkXError as e:
         graph_measurements['average_shortest_path_length'] = None
         print('Cannot compute average_shortest_path_length - {}'.format(e))
@@ -68,7 +71,7 @@ def get_graph_measurements(graph):
     # graph_measurements['clustering_centralization'] = freeman_centralization(nx.clustering(graph).values())
 
     graph_measurements['density'] = nx.density(graph)
-    graph_measurements['degree_assortativity'] = nx.degree_assortativity_coefficient(graph, weight='weight')
+    graph_measurements['degree_assortativity'] = nx.degree_assortativity_coefficient(graph, weight=None)
     graph_measurements['reciprocity'] = nx.reciprocity(graph)
     graph_measurements['transitivity'] = nx.transitivity(graph)
 
