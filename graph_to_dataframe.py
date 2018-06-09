@@ -1,7 +1,10 @@
 import pandas as pd
+import os
 
 from collections import OrderedDict
 from sklearn import preprocessing
+
+from graphs import attach_graph_attributes, attach_real_attributes
 
 
 def set_prefix_attributes(prefix, node):
@@ -75,3 +78,43 @@ def preprocess_dataframe(df, number_of_nodes):
     scaled_values = min_max_scaler.fit_transform(df)
     df.loc[:, :] = scaled_values
     return df
+
+
+def export_training_dataframes(graph, dataset_path, df_dirpath, delimiter='\t'):
+    if not os.path.exists(df_dirpath):
+        os.makedirs(df_dirpath)
+    # with graph attrs
+    graph_attrs_path = os.path.join(df_dirpath, 'graph_attrs.csv')
+
+    attach_graph_attributes(graph)
+
+    df = graph_to_training_dataframe(graph)
+    df = preprocess_dataframe(df, graph.number_of_nodes())
+    df.to_csv(graph_attrs_path, sep=delimiter, index=False)
+    # clear data
+    for node in graph:
+        keys = list(graph.nodes[node].keys())
+        for key in keys:
+            del graph.nodes[node][key]
+    # with real attrs
+    real_attrs_path = os.path.join(df_dirpath, 'real_attrs.csv')
+
+    attach_real_attributes(graph, dataset_path)
+
+    df = graph_to_training_dataframe(graph)
+    df = preprocess_dataframe(df, graph.number_of_nodes())
+    df.to_csv(real_attrs_path, sep=delimiter, index=False)
+    # clear data
+    for node in graph:
+        keys = list(graph.nodes[node].keys())
+        for key in keys:
+            del graph.nodes[node][key]
+    # with graph and real attrs
+    graph_real_attrs_path = os.path.join(df_dirpath, 'graph_real_attrs.csv')
+
+    attach_graph_attributes(graph)
+    attach_real_attributes(graph, dataset_path)
+
+    df = graph_to_training_dataframe(graph)
+    df = preprocess_dataframe(df, graph.number_of_nodes())
+    df.to_csv(graph_real_attrs_path, sep=delimiter, index=False)
