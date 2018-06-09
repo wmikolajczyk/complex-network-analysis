@@ -117,7 +117,8 @@ def recreate_by_priority_rank_no_attributes(graph):
     ])
     for node1 in graph.nodes:
         random.seed(93)
-        ranking = shuffle([x for x in graph.nodes])
+        ranking = [x for x in graph.nodes]
+        random.shuffle(ranking)
         probability = [
             1 / (harmonic_number * index)
             for index, _ in enumerate(ranking, start=1)
@@ -127,3 +128,5 @@ def recreate_by_priority_rank_no_attributes(graph):
                                         replace=False, p=probability)
         for target_node in target_nodes:
             new_graph.add_edge(node1, target_node)
+
+    return new_graph
