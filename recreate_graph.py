@@ -1,6 +1,6 @@
 import networkx as nx
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 from keras.models import Sequential
 from keras.layers import Dense
@@ -9,14 +9,7 @@ from keras.optimizers import SGD
 from tensorflow import set_random_seed
 
 
-def get_trained_model(df, epochs=128, batch_size=64, verbose=1):
-    # number of attributes without target
-    number_of_attrs = len(df.columns) - 1
-
-    # Split DF into X and y
-    X_train = df.iloc[:, :number_of_attrs]
-    y_train = df.iloc[:, number_of_attrs]
-
+def get_model1(X_train, y_train, number_of_attrs, epochs, batch_size, verbose):
     # set seed for model reproducibility
     np.random.seed(93)
     # tensorflow random seed
@@ -41,6 +34,23 @@ def get_trained_model(df, epochs=128, batch_size=64, verbose=1):
 
     evaluation = model.evaluate(X_train, y_train, verbose=1)
     print('loss: {}, accuracy: {}'.format(evaluation[0], evaluation[1]))
+    return model
+
+
+def get_trained_model(df, epochs=128, batch_size=64, verbose=1):
+    # number of attributes without target
+    number_of_attrs = len(df.columns) - 1
+
+    # Split DF into X and y
+    X_train = df.iloc[:, :number_of_attrs]
+    y_train = df.iloc[:, number_of_attrs]
+
+    # set seed for model reproducibility
+    np.random.seed(93)
+    # tensorflow random seed
+    set_random_seed(2)
+
+    model = get_model1(X_train, y_train, number_of_attrs, epochs, batch_size, verbose)
     return model
 
 
@@ -84,10 +94,10 @@ def recreate_by_priority_rank(graph, df, model):
         for target_node in target_nodes:
             new_graph.add_edge(node1_id, target_node)
 
-    # import matplotlib.pyplot as plt
-    # plt.figure(1)
-    # plt.plot(y_pred)
-    # plt.figure(2)
-    # plt.plot(df[['num_of_edges']])
-    # plt.show()
+    # show predictions and real target values
+    plt.figure(1)
+    plt.plot(y_pred)
+    plt.figure(2)
+    plt.plot(df[['num_of_edges']])
+    plt.show()
     return new_graph
