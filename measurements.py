@@ -5,7 +5,7 @@ from scipy import stats
 
 
 MEASUREMENTS = OrderedDict([
-    ('degree_centrality', 'list'),
+    ('degree_centrality', 'list'),  # in_degree_centrality / out_degree_centrality?
     ('closeness_centrality', 'list'),
     ('betweenness_centrality', 'list'),
     ('pagerank', 'list'),
@@ -17,8 +17,8 @@ MEASUREMENTS = OrderedDict([
     ('closeness_centralization', 'value'),
     ('betweenness_centralization', 'value'),
     ('pagerank_centralization', 'value'),
-    # Not implemented for directed
-    #('clustering_centralization', 'value'),
+    # not implemented for directed graphs
+    # ('clustering_centralization', 'value'),
 
     ('density', 'value'),
     ('degree_assortativity', 'value'),
@@ -42,11 +42,11 @@ def get_graph_measurements(graph):
     # measurement is a list of node values
     graph_measurements['degree_centrality'] = list(nx.degree_centrality(graph).values())
     graph_measurements['closeness_centrality'] = list(nx.closeness_centrality(graph).values())
-    graph_measurements['betweenness_centrality'] = list(nx.betweenness_centrality(graph).values())
-    graph_measurements['pagerank'] = list(nx.pagerank(graph).values())
+    graph_measurements['betweenness_centrality'] = list(nx.betweenness_centrality(graph, weight='weight').values())
+    graph_measurements['pagerank'] = list(nx.pagerank(graph, weight='weight').values())
     # measurement is a number
     try:
-        graph_measurements['average_shortest_path_length'] = nx.average_shortest_path_length(graph)
+        graph_measurements['average_shortest_path_length'] = nx.average_shortest_path_length(graph, weight='weight')
     except nx.NetworkXError as e:
         graph_measurements['average_shortest_path_length'] = None
         print('Cannot compute average_shortest_path_length - {}'.format(e))
@@ -58,16 +58,17 @@ def get_graph_measurements(graph):
 
     try:
         graph_measurements['degree_centralization'] = freeman_centralization(graph_measurements['degree_centrality'])
-        graph_measurements['closeness_centralization'] = freeman_centralization(graph_measurements['closeness_centrality'])
-        graph_measurements['betweenness_centralization'] = freeman_centralization(graph_measurements['betweenness_centrality'])
-        graph_measurements['pagerank_centralization'] = freeman_centralization(graph_measurements['pagerank'])
-        #graph_measurements['clustering_centralization'] = freeman_centralization(nx.clustering(graph).values())
     except ZeroDivisionError as e:
         graph_measurements['degree_centralization'] = None
         print('Cannot compute degree centralization - {}'.format(e))
+    graph_measurements['closeness_centralization'] = freeman_centralization(graph_measurements['closeness_centrality'])
+    graph_measurements['betweenness_centralization'] = freeman_centralization(graph_measurements['betweenness_centrality'])
+    graph_measurements['pagerank_centralization'] = freeman_centralization(graph_measurements['pagerank'])
+    # not implemented for directed graphs
+    # graph_measurements['clustering_centralization'] = freeman_centralization(nx.clustering(graph).values())
 
     graph_measurements['density'] = nx.density(graph)
-    graph_measurements['degree_assortativity'] = nx.degree_assortativity_coefficient(graph)
+    graph_measurements['degree_assortativity'] = nx.degree_assortativity_coefficient(graph, weight='weight')
     graph_measurements['reciprocity'] = nx.reciprocity(graph)
     graph_measurements['transitivity'] = nx.transitivity(graph)
 
