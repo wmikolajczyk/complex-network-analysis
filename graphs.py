@@ -1,4 +1,5 @@
 import os
+import random
 import networkx as nx
 import pandas as pd
 
@@ -13,11 +14,20 @@ def generate_graph(graph_func, params):
     return graph
 
 
-def load_dataset_to_graph(dataset_dir):
+def load_dataset_to_graph(dataset_dir, node_limit=1000):
     prepared_edge_list = os.path.join(dataset_dir, 'edge_list.csv')
     # LOAD EDGES
     # Weights are auto loaded {'weight': 1.0}
     graph = nx.read_edgelist(prepared_edge_list, create_using=nx.DiGraph(), nodetype=int)
+    # should still work after removing nodes
+    #   because real attributes mapping is based on node id
+    # remove nodes if more than node_limit
+    overlimit_nodes = graph.number_of_nodes() - node_limit
+    if overlimit_nodes > 0:
+        print('Cutting nodes up to {}'.format(node_limit))
+        random.seed(93)
+        nodes_to_remove = random.sample(graph.nodes(), overlimit_nodes)
+        graph.remove_nodes_from(nodes_to_remove)
     return graph
 
 
