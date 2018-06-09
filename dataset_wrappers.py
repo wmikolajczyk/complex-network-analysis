@@ -9,12 +9,20 @@ from konect_graphs import file_lines
 delimiter = '\t'
 
 
+# EVERY GRAPH IS TREATED AS WEIGHTED AND DIRECTED
+
 def get_paths_dict(dataset_name, edge_list_filename, node_attributes_filename=None):
     raw_datasets_path = 'raw_datasets'
     prepared_datasets_path = 'prepared_datasets'
 
+    if not os.path.exists(prepared_datasets_path):
+        os.mkdir(prepared_datasets_path)
+
     raw_dataset_dir = os.path.join(raw_datasets_path, dataset_name)
     prepared_dataset_dir = os.path.join(prepared_datasets_path, dataset_name)
+
+    if not os.path.exists(prepared_dataset_dir):
+        os.mkdir(prepared_dataset_dir)
 
     path_dict = {
         'edge_list': os.path.join(raw_dataset_dir, edge_list_filename),
@@ -28,7 +36,6 @@ def get_paths_dict(dataset_name, edge_list_filename, node_attributes_filename=No
     return path_dict
 
 
-# EVERY GRAPH TREAT AS WEIGHTED AND DIRECTED
 def prepare_primary_school(dataset_name, edge_list_filename, node_attributes_filename):
     """
     Primary school temporal network data (2 features)
@@ -41,11 +48,9 @@ def prepare_primary_school(dataset_name, edge_list_filename, node_attributes_fil
     Timestamps of contact -> to remove, but count how many connections and set it as edge weights
     """
     paths = get_paths_dict(dataset_name, edge_list_filename, node_attributes_filename)
+    print('Preparing {}...'.format(dataset_name))
 
-    if not os.path.exists(paths['prepared_dataset_dir']):
-        os.mkdir(paths['prepared_dataset_dir'])
-
-    #           PROCESS EDGES
+    # PROCESS EDGES
     # 2nd and 3rd column contains node number - 4th and 5th are attribute duplicated from meta file
     # 31220 1558    1567    3B  3B
     with open(paths['edge_list'], 'r') as source:
@@ -55,7 +60,7 @@ def prepare_primary_school(dataset_name, edge_list_filename, node_attributes_fil
             for row in reader:
                 writer.writerow((row[1], row[2]))
 
-    #               Convert multiple edges to weights
+    # Convert multiple edges to weights
     weighted_graph = nx.Graph()
     multi_graph = nx.read_edgelist(paths['prepared_edge_list'], create_using=nx.MultiGraph())
 
@@ -68,7 +73,7 @@ def prepare_primary_school(dataset_name, edge_list_filename, node_attributes_fil
     directed_weighted_graph = weighted_graph.to_directed()
     nx.write_edgelist(directed_weighted_graph, paths['prepared_edge_list'], delimiter=delimiter)
 
-    #           PROCESS ATTRIBUTES
+    # PROCESS ATTRIBUTES
     attrs_df = pd.read_csv(paths['node_attributes'], delimiter=delimiter,
         names=['node_id', 'class', 'gender'])
     attrs_df.to_csv(paths['prepared_node_attributes'], sep=delimiter, index=False)
@@ -76,18 +81,16 @@ def prepare_primary_school(dataset_name, edge_list_filename, node_attributes_fil
 
 def prepare_workplace(dataset_name, edge_list_filename, node_attributes_filename):
     paths = get_paths_dict(dataset_name, edge_list_filename, node_attributes_filename)
+    print('Preparing {}...'.format(dataset_name))
 
-    if not os.path.exists(paths['prepared_dataset_dir']):
-        os.mkdir(paths['prepared_dataset_dir'])
-
-    #           PROCESS EDGES
+    # PROCESS EDGES
     with open(paths['edge_list'], 'r') as source:
         reader = csv.reader(source, delimiter=' ')
         with open(paths['prepared_edge_list'], 'w') as result:
             writer = csv.writer(result, delimiter=delimiter)
             for row in reader:
                 writer.writerow((row[1], row[2]))
-    #               Convert multiple edges to weights
+    # Convert multiple edges to weights
     weighted_graph = nx.Graph()
     multi_graph = nx.read_edgelist(paths['prepared_edge_list'], create_using=nx.MultiGraph())
 
@@ -96,21 +99,19 @@ def prepare_workplace(dataset_name, edge_list_filename, node_attributes_filename
             weighted_graph[u][v]['weight'] += 1
         else:
             weighted_graph.add_edge(u, v, weight=1)
-    #               Convert graph to directed
+    # Convert graph to directed
     directed_weighted_graph = weighted_graph.to_directed()
     nx.write_edgelist(directed_weighted_graph, paths['prepared_edge_list'], delimiter=delimiter)
-    #           PROCESS ATTRIBUTES
+    # PROCESS ATTRIBUTES
     attrs_df = pd.read_csv(paths['node_attributes'], delimiter='\t', names=['node_id', 'department'])
     attrs_df.to_csv(paths['prepared_node_attributes'], sep=delimiter, index=False)
 
-#
+
 def prepare_highschool(dataset_name, edge_list_filename, node_attributes_filename):
     paths = get_paths_dict(dataset_name, edge_list_filename, node_attributes_filename)
+    print('Preparing {}...'.format(dataset_name))
 
-    if not os.path.exists(paths['prepared_dataset_dir']):
-        os.mkdir(paths['prepared_dataset_dir'])
-
-    #           PROCESS EDGES
+    # PROCESS EDGES
     with open(paths['edge_list'], 'r') as source:
         reader = csv.reader(source, delimiter='\t')
         with open(paths['prepared_edge_list'], 'w') as result:
@@ -118,7 +119,7 @@ def prepare_highschool(dataset_name, edge_list_filename, node_attributes_filenam
             for row in reader:
                 writer.writerow((row[1], row[2]))
 
-    #               Convert multiple edges to weights
+    # Convert multiple edges to weights
     weighted_graph = nx.Graph()
     multi_graph = nx.read_edgelist(paths['prepared_edge_list'], create_using=nx.MultiGraph())
 
@@ -131,7 +132,7 @@ def prepare_highschool(dataset_name, edge_list_filename, node_attributes_filenam
     directed_weighted_graph = weighted_graph.to_directed()
     nx.write_edgelist(directed_weighted_graph, paths['prepared_edge_list'], delimiter=delimiter)
 
-    #           PROCESS ATTRIBUTES
+    # PROCESS ATTRIBUTES
     attrs_df = pd.read_csv(paths['node_attributes'], delimiter=delimiter,
         names=['node_id', 'class', 'gender'])
     attrs_df.to_csv(paths['prepared_node_attributes'], sep=delimiter, index=False)
@@ -139,10 +140,8 @@ def prepare_highschool(dataset_name, edge_list_filename, node_attributes_filenam
 
 def prepare_hospital(dataset_name, edge_list_filename):
     paths = get_paths_dict(dataset_name, edge_list_filename)
+    print('Preparing {}...'.format(dataset_name))
     edge_list_with_attributes = paths['edge_list']
-
-    if not os.path.exists(paths['prepared_dataset_dir']):
-        os.mkdir(paths['prepared_dataset_dir'])
 
     # PROCESS EDGES
     with open(edge_list_with_attributes, 'r') as source:
@@ -183,11 +182,8 @@ def prepare_hospital(dataset_name, edge_list_filename):
 
 
 def prepare_moreno_blogs(dataset_name, edge_list_filename, node_attributes_filename):
-    # zakladamy ze sciagniety wczesniej do raw datasets
     paths = get_paths_dict(dataset_name, edge_list_filename, node_attributes_filename)
-
-    if not os.path.exists(paths['prepared_dataset_dir']):
-        os.mkdir(paths['prepared_dataset_dir'])
+    print('Preparing {}...'.format(dataset_name))
 
     # PROCESS EDGES
     # There is nice edge list - need to be converted to weights only
@@ -199,8 +195,7 @@ def prepare_moreno_blogs(dataset_name, edge_list_filename, node_attributes_filen
 
     # PROCESS ATTRIBUTES
     sorted_nodes = sorted([int(x) for x in directed_graph.nodes])
-    # sprawdz czy liczba wierszy jest taka jak liczba wierzcholkow
-
+    # each node has attributes in one line - check if there are attributes for each node
     if not file_lines(paths['node_attributes']) == len(sorted_nodes):
         raise ValueError('Number of nodes and number of lines in attributes file are not the same')
     # idz po kolei po id wierzcholkow i im tworz cechy
@@ -217,9 +212,7 @@ def prepare_moreno_blogs(dataset_name, edge_list_filename, node_attributes_filen
 
 def prepare_moreno_sheep(dataset_name, edge_list_filename, node_attributes_filename):
     paths = get_paths_dict(dataset_name, edge_list_filename, node_attributes_filename)
-
-    if not os.path.exists(paths['prepared_dataset_dir']):
-        os.mkdir(paths['prepared_dataset_dir'])
+    print('Preparing {}...'.format(dataset_name))
 
     # PROCESS EDGES
     # Graph id Directed and have not Multi edges
@@ -230,7 +223,7 @@ def prepare_moreno_sheep(dataset_name, edge_list_filename, node_attributes_filen
 
     # PROCESS ATTRIBUTES
     sorted_nodes = sorted(directed_weighted_graph.nodes)
-
+    # each node has attributes in one line - check if there are attributes for each node
     if not file_lines(paths['node_attributes']) == len(sorted_nodes):
         raise ValueError('Number of nodes and number of lines in attributes file are not the same')
 
@@ -252,9 +245,7 @@ def prepare_moreno_sheep(dataset_name, edge_list_filename, node_attributes_filen
 
 def prepare_moreno_seventh(dataset_name, edge_list_filename, node_attributes_filename):
     paths = get_paths_dict(dataset_name, edge_list_filename, node_attributes_filename)
-
-    if not os.path.exists(paths['prepared_dataset_dir']):
-        os.mkdir(paths['prepared_dataset_dir'])
+    print('Preparing {}...'.format(dataset_name))
 
     # PROCESS EDGES
     directed_weighted_graph = nx.read_edgelist(paths['edge_list'], create_using=nx.DiGraph(), comments='%',
@@ -278,9 +269,7 @@ def prepare_moreno_seventh(dataset_name, edge_list_filename, node_attributes_fil
 
 def prepare_petster_hamster(dataset_name, edge_list_filename, node_attributes_filename):
     paths = get_paths_dict(dataset_name, edge_list_filename, node_attributes_filename)
-
-    if not os.path.exists(paths['prepared_dataset_dir']):
-        os.mkdir(paths['prepared_dataset_dir'])
+    print('Preparing {}...'.format(dataset_name))
 
     # PROCESS EDGES
     graph = nx.read_edgelist(paths['edge_list'], create_using=nx.Graph(), comments='%',
@@ -315,9 +304,7 @@ def prepare_petster_hamster(dataset_name, edge_list_filename, node_attributes_fi
 
 def prepare_email_eu(dataset_name, edge_list_filename, node_attributes_filename):
     paths = get_paths_dict(dataset_name, edge_list_filename, node_attributes_filename)
-
-    if not os.path.exists(paths['prepared_dataset_dir']):
-        os.mkdir(paths['prepared_dataset_dir'])
+    print('Preparing {}...'.format(dataset_name))
 
     # PROCESS EDGES
     directed_graph = nx.read_edgelist(paths['edge_list'], create_using=nx.DiGraph(), nodetype=int)
@@ -337,7 +324,6 @@ def prepare_email_eu(dataset_name, edge_list_filename, node_attributes_filename)
     attrs_df = pd.get_dummies(attrs_df, columns=['department'], prefix='department')
     attrs_df.to_csv(paths['prepared_node_attributes'], sep=delimiter, index=False)
 
-# TODO: refactoring
 
 prepare_primary_school('primary_school', 'primaryschool.csv', 'metadata_primaryschool.txt')
 prepare_workplace('workplace', 'tij_InVS.dat', 'metadata_InVS13.txt')
