@@ -4,12 +4,23 @@ import csv
 import networkx as nx
 import pandas as pd
 
-from konect_graphs import file_lines
 
 delimiter = '\t'
 
 
+def count_file_lines(filename):
+    with open(filename) as f:
+        for i, l in enumerate(f):
+            pass
+    return i + 1
+
+
 # EVERY GRAPH IS TREATED AS WEIGHTED AND DIRECTED
+def preprocess_generative_graph(graph):
+    graph = graph.to_directed()
+    nx.set_edge_attributes(graph, name='weight', values=1)
+    return graph
+
 
 def get_paths_dict(dataset_name, edge_list_filename, node_attributes_filename=None):
     raw_datasets_path = 'raw_datasets'
@@ -196,7 +207,7 @@ def prepare_moreno_blogs(dataset_name, edge_list_filename, node_attributes_filen
     # PROCESS ATTRIBUTES
     sorted_nodes = sorted([int(x) for x in directed_graph.nodes])
     # each node has attributes in one line - check if there are attributes for each node
-    if not file_lines(paths['node_attributes']) == len(sorted_nodes):
+    if not count_file_lines(paths['node_attributes']) == len(sorted_nodes):
         raise ValueError('Number of nodes and number of lines in attributes file are not the same')
     # idz po kolei po id wierzcholkow i im tworz cechy
     with open(paths['node_attributes'], 'r') as source:
@@ -224,7 +235,7 @@ def prepare_moreno_sheep(dataset_name, edge_list_filename, node_attributes_filen
     # PROCESS ATTRIBUTES
     sorted_nodes = sorted(directed_weighted_graph.nodes)
     # each node has attributes in one line - check if there are attributes for each node
-    if not file_lines(paths['node_attributes']) == len(sorted_nodes):
+    if not count_file_lines(paths['node_attributes']) == len(sorted_nodes):
         raise ValueError('Number of nodes and number of lines in attributes file are not the same')
 
     with open(paths['node_attributes'], 'r') as source:
@@ -255,7 +266,7 @@ def prepare_moreno_seventh(dataset_name, edge_list_filename, node_attributes_fil
     # PROCESS ATTRIBUTES
     sorted_nodes = sorted(directed_weighted_graph.nodes)
 
-    if not file_lines(paths['node_attributes']) == len(sorted_nodes):
+    if not count_file_lines(paths['node_attributes']) == len(sorted_nodes):
         raise ValueError('Number of nodes and number of lines in attributes file are not the same')
 
     with open(paths['node_attributes'], 'r') as source:
@@ -316,7 +327,7 @@ def prepare_email_eu(dataset_name, edge_list_filename, node_attributes_filename)
     # PROCESS ATTRIBUTES
     sorted_nodes = sorted(directed_graph.nodes)
 
-    if file_lines(paths['node_attributes']) != len(sorted_nodes):
+    if count_file_lines(paths['node_attributes']) != len(sorted_nodes):
         raise ValueError('Number of nodes and number of lines in attributes file are not the same')
     # replace department numbers with letters -> to prevent casting to numeric 
     #   while loading into dataframe
