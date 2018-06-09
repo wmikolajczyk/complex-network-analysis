@@ -229,7 +229,7 @@ def prepare_moreno_sheep(dataset_name, edge_list_filename, node_attributes_filen
     # Graph id Directed and have not Multi edges
     #   so there is no need to sum weights
     directed_weighted_graph = nx.read_edgelist(paths['edge_list'], create_using=nx.DiGraph(), comments='%', 
-        nodetype=int, data=(('weight', float),))
+        nodetype=int, data=(('weight', int),))
     nx.write_edgelist(directed_weighted_graph, paths['prepared_edge_list'], delimiter=delimiter)
 
     # PROCESS ATTRIBUTES
@@ -260,7 +260,7 @@ def prepare_moreno_seventh(dataset_name, edge_list_filename, node_attributes_fil
 
     # PROCESS EDGES
     directed_weighted_graph = nx.read_edgelist(paths['edge_list'], create_using=nx.DiGraph(), comments='%',
-        nodetype=int, data=(('weight', float),))
+        nodetype=int, data=(('weight', int),))
     nx.write_edgelist(directed_weighted_graph, paths['prepared_edge_list'], delimiter=delimiter)
 
     # PROCESS ATTRIBUTES
