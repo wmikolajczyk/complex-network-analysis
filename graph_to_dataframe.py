@@ -83,6 +83,13 @@ def preprocess_dataframe(df, number_of_nodes):
 def export_training_dataframes(graph, dataset_path, df_dirpath, delimiter='\t'):
     if not os.path.exists(df_dirpath):
         os.makedirs(df_dirpath)
+
+    # no attrs - only num of edges normalized
+    no_attrs_path = os.path.join(df_dirpath, 'no_attrs.csv')
+
+    df = graph_to_training_dataframe(graph)
+    df = preprocess_dataframe(df, graph.number_of_nodes())
+    df.to_csv(no_attrs_path, sep=delimiter, index=False)
     # with graph attrs
     graph_attrs_path = os.path.join(df_dirpath, 'graph_attrs.csv')
 
