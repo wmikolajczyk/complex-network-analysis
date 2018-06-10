@@ -130,3 +130,44 @@ def recreate_by_priority_rank_no_attributes(graph):
             new_graph.add_edge(node1, target_node)
 
     return new_graph
+
+
+def recreate_by_priority_rank_y_real(graph, df):
+    num_edges = round(graph.number_of_edges() / graph.number_of_nodes())
+    num_of_nodes = graph.number_of_nodes()
+
+    new_graph = nx.DiGraph()
+    y_real = df['num_of_edges']
+
+    # used when calculating probability ranking
+    harmonic_number = sum([
+        1 / k for k in range(1, num_of_nodes + 1)
+    ])
+    for node1_index, node1_id in enumerate(graph.nodes):
+        # get dict of node rankings
+        #   [(node0_id, num_edges), (node1_id, num_edges)]
+        similarities = []
+        for node2_index, node2_id in enumerate(graph.nodes):
+            node_index = node1_index * num_of_nodes + node2_index
+            similarities.append((node2_id, y_real[node_index]))
+        # Node ranking sorted in descending similarity order
+        ranking = [
+            node2_id
+            for (node2_id, similarity) in
+            sorted(similarities, key=lambda x: x[1], reverse=True)
+        ]
+        # Probability of connection to node on each position at the ranking
+        probability = [
+            1 / (harmonic_number * index)
+            for index, _ in enumerate(ranking, start=1)
+        ]
+        # TODO: set seet or not? should it be deterministic?
+        # Choose randomly k (num_edges) nodes to make connections with
+        target_nodes = np.random.choice(ranking, size=num_edges,
+                                        replace=False, p=probability)
+        # Add edges to new graph
+        # creating verticles while adding edges
+        for target_node in target_nodes:
+            new_graph.add_edge(node1_id, target_node)
+
+    return new_graph
