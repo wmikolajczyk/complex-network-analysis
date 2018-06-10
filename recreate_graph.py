@@ -56,15 +56,12 @@ def get_trained_model(df, epochs=128, batch_size=64, verbose=1):
     return model
 
 
-def recreate_by_priority_rank(graph, df, model, show_graphs=False):
+def recreate_by_priority_rank(graph, target_col):
+    # target_col - nd_array type
     num_edges = round(graph.number_of_edges() / graph.number_of_nodes())
     num_of_nodes = graph.number_of_nodes()
 
     new_graph = nx.DiGraph()
-    # drop target column
-    X_test = df.drop(['num_of_edges'], axis=1)
-    # predict num_edges
-    y_pred = model.predict(X_test)
 
     # used when calculating probability ranking
     harmonic_number = sum([
@@ -76,7 +73,7 @@ def recreate_by_priority_rank(graph, df, model, show_graphs=False):
         similarities = []
         for node2_index, node2_id in enumerate(graph.nodes):
             node_index = node1_index * num_of_nodes + node2_index
-            similarities.append((node2_id, y_pred.item(node_index)))
+            similarities.append((node2_id, target_col.item(node_index)))
         # Node ranking sorted in descending similarity order
         ranking = [
             node2_id
@@ -88,7 +85,7 @@ def recreate_by_priority_rank(graph, df, model, show_graphs=False):
             1 / (harmonic_number * index)
             for index, _ in enumerate(ranking, start=1)
         ]
-        # TODO: set seet or not? should it be deterministic?
+        # TODO: set seed or not? should it be deterministic?
         # Choose randomly k (num_edges) nodes to make connections with
         target_nodes = np.random.choice(ranking, size=num_edges,
                                         replace=False, p=probability)
@@ -97,17 +94,10 @@ def recreate_by_priority_rank(graph, df, model, show_graphs=False):
         for target_node in target_nodes:
             new_graph.add_edge(node1_id, target_node)
 
-    if show_graphs:
-        # show predictions and real target values
-        plt.figure(1)
-        plt.plot(y_pred)
-        plt.figure(2)
-        plt.plot(df[['num_of_edges']])
-        plt.show()
     return new_graph
 
 
-def recreate_by_priority_rank_no_attributes(graph):
+def recreate_by_priority_rank_random_rankings(graph):
     num_edges = round(graph.number_of_edges() / graph.number_of_nodes())
     num_of_nodes = graph.number_of_nodes()
 
@@ -129,46 +119,5 @@ def recreate_by_priority_rank_no_attributes(graph):
                                         replace=False, p=probability)
         for target_node in target_nodes:
             new_graph.add_edge(node1, target_node)
-
-    return new_graph
-
-
-def recreate_by_priority_rank_y_real(graph, df):
-    num_edges = round(graph.number_of_edges() / graph.number_of_nodes())
-    num_of_nodes = graph.number_of_nodes()
-
-    new_graph = nx.DiGraph()
-    y_real = df['num_of_edges']
-
-    # used when calculating probability ranking
-    harmonic_number = sum([
-        1 / k for k in range(1, num_of_nodes + 1)
-    ])
-    for node1_index, node1_id in enumerate(graph.nodes):
-        # get dict of node rankings
-        #   [(node0_id, num_edges), (node1_id, num_edges)]
-        similarities = []
-        for node2_index, node2_id in enumerate(graph.nodes):
-            node_index = node1_index * num_of_nodes + node2_index
-            similarities.append((node2_id, y_real[node_index]))
-        # Node ranking sorted in descending similarity order
-        ranking = [
-            node2_id
-            for (node2_id, similarity) in
-            sorted(similarities, key=lambda x: x[1], reverse=True)
-        ]
-        # Probability of connection to node on each position at the ranking
-        probability = [
-            1 / (harmonic_number * index)
-            for index, _ in enumerate(ranking, start=1)
-        ]
-        # TODO: set seet or not? should it be deterministic?
-        # Choose randomly k (num_edges) nodes to make connections with
-        target_nodes = np.random.choice(ranking, size=num_edges,
-                                        replace=False, p=probability)
-        # Add edges to new graph
-        # creating verticles while adding edges
-        for target_node in target_nodes:
-            new_graph.add_edge(node1_id, target_node)
 
     return new_graph
