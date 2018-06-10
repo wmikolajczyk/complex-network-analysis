@@ -10,7 +10,7 @@ from keras.optimizers import SGD
 from tensorflow import set_random_seed
 
 
-def get_model(X_train, y_train, number_of_attrs, epochs, batch_size, verbose):
+def get_model(number_of_attrs):
     # set seed for model reproducibility
     np.random.seed(93)
     # tensorflow random seed
@@ -31,10 +31,6 @@ def get_model(X_train, y_train, number_of_attrs, epochs, batch_size, verbose):
 
     model.compile(optimizer=SGD(lr=0.01), loss='mean_squared_error', metrics=['accuracy'])
 
-    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=verbose)
-
-    evaluation = model.evaluate(X_train, y_train, verbose=1)
-    print('loss: {}, accuracy: {}'.format(evaluation[0], evaluation[1]))
     return model
 
 
@@ -51,7 +47,12 @@ def get_trained_model(df, epochs=128, batch_size=64, verbose=1):
     # tensorflow random seed
     set_random_seed(2)
 
-    model = get_model(X_train, y_train, number_of_attrs, epochs, batch_size, verbose)
+    model = get_model(number_of_attrs)
+
+    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=verbose)
+
+    evaluation = model.evaluate(X_train, y_train, verbose=1)
+    print('loss: {}, accuracy: {}'.format(evaluation[0], evaluation[1]))
     return model
 
 
