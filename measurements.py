@@ -1,5 +1,7 @@
 import networkx as nx
 
+from collections import defaultdict
+
 from collections import OrderedDict
 from scipy import stats
 
@@ -129,13 +131,18 @@ def print_comparison_results(comparison_results):
 
 
 def average_comparison(comparison_list):
-    avg_dict = comparison_list[0].copy()
+    keys = comparison_list[0].keys()
+    avg_dict = defaultdict(list)
 
-    for comparison in comparison_list[1:]:
-        for key in avg_dict:
-            avg_dict[key] += comparison[key]
+    for comparison in comparison_list:
+        for key in keys:
+            avg_dict[key].append(comparison[key])
 
-    for key in avg_dict:
-        avg_dict[key] /= len(comparison_list)
+    for key in keys:
+        avg_dict[key] = list(filter(None, avg_dict[key]))
+        try:
+            avg_dict[key] = sum(avg_dict[key]) / len(avg_dict[key])
+        except ZeroDivisionError:
+            avg_dict[key] = None
 
     return avg_dict
