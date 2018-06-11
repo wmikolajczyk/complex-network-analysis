@@ -126,3 +126,16 @@ def print_comparison_results(comparison_results):
                 passed_test = None
         msg = '{:18} {:50} [passed: {}]'.format(name, result, passed_test)
         print(msg)
+
+
+def average_comparison(comparison_list):
+    avg_dict = comparison_list[0].copy()
+
+    for comparison in comparison_list[1:]:
+        for key in avg_dict:
+            avg_dict[key] += comparison[key]
+
+    for key in avg_dict:
+        avg_dict[key] /= len(comparison_list)
+
+    return avg_dict
