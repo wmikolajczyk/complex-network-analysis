@@ -1,35 +1,55 @@
 import random
 import networkx as nx
 import numpy as np
-import matplotlib.pyplot as plt
 
 from keras.models import Sequential
 from keras.layers import Dense
-from keras.optimizers import SGD
 
 from tensorflow import set_random_seed
 
 
 def get_model(number_of_attrs):
+    """
+    Number of units in layers (more than 1 unit in layer):
+        1. first = number_of_attrs * 1.5
+        2. second = first / 2 or number_of_attrs
+        3. third = second / 2 or second
+        4. 1
+    """
     # set seed for model reproducibility
     np.random.seed(93)
     # tensorflow random seed
     set_random_seed(2)
+    # calculate number of units in second and third layer
+    #   in moreno_sheep dataset there are only 2 attributes
+    #   so it's important to handle this case
+    num_of_units_second_layer = round(number_of_attrs / 2)
+    if not num_of_units_second_layer > 1:
+        num_of_units_second_layer = number_of_attrs
+
+    num_of_units_third_layer = round(num_of_units_second_layer / 2)
+    if not num_of_units_third_layer > 1:
+        num_of_units_third_layer = num_of_units_second_layer
 
     model = Sequential()
 
-    # init normal ?
     model.add(Dense(
-        units=number_of_attrs,
+        units=round(number_of_attrs * 1.5),
         input_dim=number_of_attrs,
-        activation='linear'))
+        activation='relu'
+    ))
     model.add(Dense(
-        units=round(number_of_attrs / 2),
-        input_dim=round(number_of_attrs / 2),
-        activation='relu'))
-    model.add(Dense(units=1, activation='sigmoid'))
-
-    model.compile(optimizer=SGD(lr=0.01), loss='mean_squared_error', metrics=['accuracy'])
+        units=num_of_units_second_layer,
+        activation='relu'
+    ))
+    model.add(Dense(
+        units=num_of_units_third_layer,
+        activation='relu'
+    ))
+    model.add(Dense(
+        units=1, activation='sigmoid')
+    )
+    model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
 
     return model
 
