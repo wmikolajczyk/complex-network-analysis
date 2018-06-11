@@ -14,7 +14,7 @@ def generate_graph(graph_func, params):
     return graph
 
 
-def load_dataset_to_graph(dataset_dir, node_limit=1000):
+def load_dataset_to_graph(dataset_dir, node_limit=600):
     prepared_edge_list = os.path.join(dataset_dir, 'edge_list.csv')
     # LOAD EDGES
     # Weights are auto loaded {'weight': 1.0}
