@@ -103,7 +103,7 @@ def collect_graph_measurements(graph1_measurements, graph2_measurements):
     return results
 
 
-def get_measurements_results_df(df):
+def get_measurements_results_df(df, orig_df):
     alpha = 0.95
     results = []
     for measure in df.columns:
@@ -124,11 +124,18 @@ def get_measurements_results_df(df):
             'mean': mean, 
             'lower_endpoint': _lower, 
             'upper_endpoint': _upper, 
-            # bool(_lower <= mean <= _upper)
+            'original': None,
+            'is_between_bounds': None
         }
+        if measure in orig_df.columns:
+            row['original'] = orig_df[measure][0]
+            if not np.isnan(row['original']):
+                row['is_between_bounds'] = bool(_lower <= orig_df[measure][0] <= _upper)
         results.append(row)
     results_df = pd.DataFrame(results)
-    results_df = results_df.reindex(columns=['measure', 'mean', 'lower_endpoint', 'upper_endpoint'])
+    results_df = results_df.reindex(columns=[
+        'measure', 'mean', 'lower_endpoint', 'upper_endpoint', 'original', 
+        'is_between_bounds'])
     return results_df
 
 
