@@ -1,4 +1,6 @@
 import networkx as nx
+import numpy as np
+import pandas as pd
 
 from collections import defaultdict
 
@@ -80,6 +82,56 @@ def get_graph_measurements(graph):
     return graph_measurements
 
 
+def collect_graph_measurements(graph1_measurements, graph2_measurements):
+    results = OrderedDict()
+    for measurement, m_type in MEASUREMENTS.items():
+        if m_type == 'list':
+            ks_stat, ks_pval = stats.ks_2samp(
+                graph1_measurements[measurement],
+                graph2_measurements[measurement])
+            ent_pred = stats.entropy(graph2_measurements[measurement])
+            kl_div = stats.entropy(
+                graph1_measurements[measurement], 
+                graph2_measurements[measurement])
+
+            results[measurement + '_ks_stat'] = ks_stat
+            results[measurement + '_ks_pval'] = ks_pval 
+            results[measurement + '_ent_pred'] = ent_pred
+            results[measurement + '_kl_div'] = kl_div
+        else:
+            results[measurement] = graph2_measurements[measurement]
+    return results
+
+
+def get_measurements_results_df(df):
+    alpha = 0.95
+    results = []
+    for measure in df.columns:
+        # drop NaNs
+        values = df[measure].dropna()
+
+        # compute the mean and the standard deviation 
+        # of the measure from all experiments
+        mean, sigma = np.mean(values), np.std(values)
+
+        # compute confidence intervals of the mean 
+        # of the measure from all experiments
+        _lower, _upper = stats.norm.interval(alpha, 
+                                       loc=mean, 
+                                       scale=sigma/np.sqrt(len(values)))
+        row = {
+            'measure': measure, 
+            'mean': mean, 
+            'lower_endpoint': _lower, 
+            'upper_endpoint': _upper, 
+            # bool(_lower <= mean <= _upper)
+        }
+        results.append(row)
+    results_df = pd.DataFrame(results)
+    results_df = results_df.reindex(columns=['measure', 'mean', 'lower_endpoint', 'upper_endpoint'])
+    return results_df
+
+
 def compare_graph_measurements(graph1_measurements, graph2_measurements):
     results = OrderedDict()
     for measurement, m_type in MEASUREMENTS.items():
@@ -116,7 +168,6 @@ def print_comparison_results(comparison_results):
 
     for measurement, m_type in MEASUREMENTS.items():
         result = '{}: {}'.format(measurement, comparison_results[measurement])
-
         if m_type == 'list':
             name = '(KS test p-value)'
             passed_test = comparison_results[measurement] > ks_test_min_threshold
