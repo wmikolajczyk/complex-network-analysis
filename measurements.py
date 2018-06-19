@@ -105,7 +105,6 @@ def collect_graph_measurements(graph1_measurements, graph2_measurements):
 
 def get_measurements_results_df(df, orig_df):
     alpha = 0.95
-    pval_threshold = 0.05
     results = []
     for measure in df.columns:
         # drop NaNs
@@ -127,20 +126,16 @@ def get_measurements_results_df(df, orig_df):
             'upper_endpoint': _upper, 
             'original': None,
             'is_between_bounds': None,
-            'ks_test_passed': None
         }
         if measure in orig_df.columns:
             row['original'] = orig_df[measure][0]
             if not np.isnan(row['original']):
                 row['is_between_bounds'] = bool(_lower <= orig_df[measure][0] <= _upper)
-
-        if '_ks_pval' in measure:
-            row['ks_test_passed'] = bool(mean > pval_threshold)
         results.append(row)
     results_df = pd.DataFrame(results)
     results_df = results_df.reindex(columns=[
         'measure', 'mean', 'lower_endpoint', 'upper_endpoint', 'original', 
-        'is_between_bounds', 'ks_test_passed'])
+        'is_between_bounds'])
     return results_df
 
 
