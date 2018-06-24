@@ -105,7 +105,6 @@ def recreate_by_priority_rank(graph, target_col):
             1 / (harmonic_number * index)
             for index, _ in enumerate(ranking, start=1)
         ]
-        # TODO: set seed or not? should it be deterministic?
         # Choose randomly k (num_edges) nodes to make connections with
         target_nodes = np.random.choice(ranking, size=num_edges,
                                         replace=False, p=probability)
