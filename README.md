@@ -1,4 +1,5 @@
 # Complex network analysis
+This is the code of my master's thesis
 
 ### Preparation
 #### Real graphs
