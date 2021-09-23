@@ -1,5 +1,7 @@
 # Complex network analysis
-This is the code of my master's thesis
+This is the code of my master's thesis: `Deep neural networks in the analysis and mining of complex networks`
+
+The goal was to analyze the possibilities of recreating complex networks by using deep neural networks
 
 ### Preparation
 #### Real graphs
